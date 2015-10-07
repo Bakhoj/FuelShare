@@ -7,18 +7,18 @@
     tools:context="com.example.anders.fuelshare.LoginAct">
 
     <ImageView
+        android:id="@+id/login_logo_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/login_logo_img"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:src="@drawable/Logo" />
 
     <TextView
+        android:id="@+id/login_user_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="UserName or Email"
-        android:id="@+id/user_tv"
         android:layout_below="@+id/login_logo_img"
         android:layout_alignParentStart="true"
         android:layout_marginTop="20dp"
@@ -27,13 +27,63 @@
         android:textSize="20dp" />
 
     <EditText
+        android:id="@+id/login_user_et"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:ems="10"
-        android:id="@+id/editText"
-        android:layout_below="@+id/user_tv"
+        android:layout_below="@+id/login_user_tv"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="20dp" />
+        android:layout_marginLeft="20dp"
+        android:hint="User"
+        android:layout_marginRight="20dp"
+        android:layout_alignParentEnd="true"
+        android:autoText="false"
+        android:singleLine="true" />
+
+    <TextView
+        android:id="@+id/login_pass_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Password"
+        android:textSize="20dp"
+        android:layout_below="@+id/login_user_et"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="30dp"
+        android:layout_alignParentEnd="false" />
+
+    <EditText
+        android:id="@+id/login_pass_et"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:autoText="false"
+        android:singleLine="true"
+        android:layout_below="@+id/login_pass_tv"
+        android:layout_alignParentStart="true"
+        android:password="true"
+        android:layout_alignParentEnd="true"
+        android:hint="Password" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:id="@+id/login_login_but"
+        android:layout_below="@+id/login_pass_et"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="40dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create"
+        android:id="@+id/login_create_but"
+        android:layout_alignTop="@+id/login_login_but"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="40dp" />
 </RelativeLayout>
