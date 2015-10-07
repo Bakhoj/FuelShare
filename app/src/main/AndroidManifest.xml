@@ -20,6 +20,10 @@
             android:name=".PEDOact"
             android:label="@string/title_activity_pedoact" >
         </activity>
+        <activity
+            android:name=".LoginAct"
+            android:label="@string/title_activity_login" >
+        </activity>
     </application>
 
 </manifest>
