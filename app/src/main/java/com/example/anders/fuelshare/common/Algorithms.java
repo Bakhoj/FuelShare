@@ -1,11 +1,11 @@
-package com.example.anders.fuelshare;
+package com.example.anders.fuelshare.common;
 
 /**
  * @author Lars
  *
  * info: This Class handles all the calculations for PEDO
  */
-public class Algo {
+public class Algorithms {
 
     private int batLvl, dist, vel, bPedal; // BatteryLevel, distance, velocity, breakPedal
 

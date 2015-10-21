@@ -1,4 +1,4 @@
-package com.example.anders.fuelshare;
+package com.example.anders.fuelshare.common;
 
 /**
  * Created by anders on 21-10-2015.

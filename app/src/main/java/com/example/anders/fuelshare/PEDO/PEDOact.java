@@ -1,22 +1,25 @@
-package com.example.anders.fuelshare;
+package com.example.anders.fuelshare.PEDO;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class LoginAct extends Activity {
+import com.example.anders.fuelshare.R;
+
+public class PEDOact extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_pedoact);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
+        getMenuInflater().inflate(R.menu.menu_pedoact, menu);
         return true;
     }
 

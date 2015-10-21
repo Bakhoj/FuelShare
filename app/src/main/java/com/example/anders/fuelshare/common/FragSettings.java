@@ -1,4 +1,4 @@
-package com.example.anders.fuelshare;
+package com.example.anders.fuelshare.common;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -6,12 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.anders.fuelshare.R;
+
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PEDOactFragment extends Fragment {
+public class FragSettings extends Fragment {
 
-    public PEDOactFragment() {
+    public FragSettings() {
     }
 
     @Override
