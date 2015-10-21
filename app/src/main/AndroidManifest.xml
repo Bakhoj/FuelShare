@@ -24,6 +24,10 @@
             android:name=".logIn.LoginAct"
             android:label="@string/title_activity_login" >
         </activity>
+        <activity
+            android:name=".logIn.LogInAct"
+            android:label="@string/title_activity_log_in" >
+        </activity>
     </application>
 
 </manifest>
