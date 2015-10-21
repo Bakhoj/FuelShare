@@ -6,4 +6,5 @@
     <string name="title_activity_pedoact">PEDOact</string>
     <string name="title_activity_login">LoginAct</string>
     <string name="title_activity_log_in">LogInAct</string>
+    <string name="title_activity_map">MapAct</string>
 </resources>

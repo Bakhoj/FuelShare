@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.anders.fuelshare" >
@@ -21,13 +22,21 @@
             android:label="@string/title_activity_pedoact" >
         </activity>
         <activity
-            android:name=".logIn.LoginAct"
-            android:label="@string/title_activity_login" >
-        </activity>
-        <activity
             android:name=".logIn.LogInAct"
             android:label="@string/title_activity_log_in" >
         </activity>
     </application>
 
 </manifest>
+
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <application>
+        <activity android:name="com.example.anders.fuelshare.map.MapAct"
+                    android:label="@string/title_activity_map"
+>
+        </activity>
+    </application>
+</manifest>
+
