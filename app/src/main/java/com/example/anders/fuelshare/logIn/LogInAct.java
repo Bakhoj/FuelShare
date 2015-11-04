@@ -15,8 +15,7 @@ import com.example.anders.fuelshare.map.MapAct;
 
 public class LogInAct extends Activity implements View.OnClickListener{
 
-    private final int REQUEST_ENABLE_BT = 27; //should just not be = 0
-    BTH bth = null;
+    BTH bth = BTH.getInstace();
     Button logBtn, createBtn;
     Intent i;
     EditText ETemail, ETpass;
@@ -27,7 +26,7 @@ public class LogInAct extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_login);
 
-        startBth();
+        bth.startBt(this);
 
         //login button listener
         logBtn = (Button) findViewById(R.id.login_ok_but);
@@ -36,14 +35,6 @@ public class LogInAct extends Activity implements View.OnClickListener{
         //create button listener
         createBtn = (Button) findViewById(R.id.login_create_but);
         createBtn.setOnClickListener(this);
-    }
-
-    private void startBth(){
-        bth = new BTH();
-        if(!bth.isBtEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
     }
 
     private boolean checkLogIn(){
