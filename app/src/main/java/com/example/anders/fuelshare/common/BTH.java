@@ -6,6 +6,8 @@ import android.content.Intent;
 /**
  * BlueTooth Handler
  * Created by anders on 28-10-2015.
+ *
+ * Handles and keeps the bluetooth connection for the whole application
  */
 public class BTH {
     BluetoothAdapter mBluetoothAdapter = null;

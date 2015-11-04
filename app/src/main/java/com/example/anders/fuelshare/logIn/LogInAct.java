@@ -11,7 +11,7 @@ import com.example.anders.fuelshare.common.BTH;
 
 public class LogInAct extends Activity {
 
-    private final int REQUEST_ENABLE_BT = 27;
+    private final int REQUEST_ENABLE_BT = 27; //should just not be = 0
     BTH bth = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
