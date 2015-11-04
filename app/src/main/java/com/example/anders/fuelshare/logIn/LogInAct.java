@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 import com.example.anders.fuelshare.R;
 import com.example.anders.fuelshare.common.BTH;
+import com.example.anders.fuelshare.map.MapAct;
 
 
 public class LogInAct extends Activity implements View.OnClickListener{
@@ -54,13 +55,36 @@ public class LogInAct extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.login_ok_but:
-                i = new Intent()
-                System.out.println("Log In");
+                if(login()) {
+                    i = new Intent(this, MapAct.class);
+                    this.startActivity(i);
+                    finish();
+                    System.out.println("Log In");
+                }
+                else{
+                    loginFail();
+                }
                 break;
             case R.id.login_create_but:
-
                 System.out.println("Create");
                 break;
         }
+    }
+
+    private boolean login(){
+        /*
+            check if the user and password fit with the Database
+            right now it just puts the email and password into strings
+         */
+        sEmail = ETemail.getText().toString();
+        sPass = ETpass.getText().toString();
+        return true;
+    }
+
+    private void loginFail(){
+        /*
+            Add popup window or something telling the user
+            that the user and password combination wasn't found
+         */
     }
 }
