@@ -50,7 +50,6 @@ public class LogInAct extends Activity implements View.OnClickListener{
                     i = new Intent(this, MapAct.class);
                     this.startActivity(i);
                     finish();
-                    System.out.println("Log In");
                 }
                 else{
                     loginFail();
