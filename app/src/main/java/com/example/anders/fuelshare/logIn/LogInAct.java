@@ -16,7 +16,7 @@ import com.example.anders.fuelshare.map.MapAct;
 public class LogInAct extends Activity implements View.OnClickListener{
 
     BTH bth = BTH.getInstace();
-    Button logBtn, createBtn;
+    Button logBtn, createBtn, somethingelse;
     Intent i;
     EditText ETemail, ETpass;
     String sEmail, sPass;
