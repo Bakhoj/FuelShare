@@ -1,6 +1,5 @@
 package com.example.anders.fuelshare.logIn;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
@@ -8,16 +7,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.anders.fuelshare.PEDO.PEDOact;
 import com.example.anders.fuelshare.R;
-import com.example.anders.fuelshare.common.BTH;
+import com.example.anders.fuelshare.data.BTH;
 import com.example.anders.fuelshare.map.MapAct;
 
 
 public class LogInAct extends Activity implements View.OnClickListener{
 
-    BTH bth = BTH.getInstace();
-    Button logBtn, createBtn, somethingelse;
-    Intent i;
+    BTH bth = BTH.getInstance();
+    Button logBtn, createBtn;
+    Intent i;                   // dårlig idea at smide den her op, så allocater du plads til en intent uden at vide om du skal bruge den endnu
     EditText ETemail, ETpass;
     String sEmail, sPass;
 
@@ -57,6 +57,9 @@ public class LogInAct extends Activity implements View.OnClickListener{
                 break;
             case R.id.login_create_but:
                 System.out.println("Create");
+                i = new Intent(this, PEDOact.class);
+                this.startActivity(i);
+                finish();
                 break;
         }
     }

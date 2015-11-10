@@ -1,18 +1,35 @@
 package com.example.anders.fuelshare.PEDO;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.anders.fuelshare.R;
+import com.example.anders.fuelshare.data.BTH;
 
 public class PEDOact extends Activity {
+
+    TextView distance, battery, usage;
+    BTH bth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_pedo);
+
+        distance = (TextView) findViewById(R.id.pedo_test_distance);
+        battery = (TextView) findViewById(R.id.pedo_test_battery_level);
+        usage = (TextView) findViewById(R.id.pedo_test_usage);
+
+        distance.setText("Distance traveled: \t0");
+        battery.setText("Battery level: \t\t\t\t0");
+        usage.setText("use/distance: \t\t\t\t0");
+        bth = BTH.getInstance();
+        //bth.connectBT();
+        bth.testMethod(bth.connectBT());
     }
 
 
