@@ -8,15 +8,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.anders.fuelshare.PEDO.PEDOact;
 import com.example.anders.fuelshare.R;
-import com.example.anders.fuelshare.common.BTH;
+import com.example.anders.fuelshare.data.BTH;
 import com.example.anders.fuelshare.map.MapAct;
 
 
 public class LogInAct extends Activity implements View.OnClickListener{
 
-    BTH bth = BTH.getInstace();
-    Button logBtn, createBtn, somethingelse;
+    BTH bth = BTH.getInstance();
+    Button logBtn, createBtn;
     Intent i;
     EditText ETemail, ETpass;
     String sEmail, sPass;
@@ -46,16 +47,19 @@ public class LogInAct extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.login_ok_but:
-                if(login()) {
+                //if(login()) {
                     i = new Intent(this, MapAct.class);
                     this.startActivity(i);
                     finish();
-                }
-                else{
-                    loginFail();
-                }
+                //}
+                //else{
+                //    loginFail();
+                //}
                 break;
             case R.id.login_create_but:
+                i = new Intent(this, PEDOact.class);
+                this.startActivity(i);
+                finish();
                 System.out.println("Create");
                 break;
         }

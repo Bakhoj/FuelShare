@@ -92,7 +92,7 @@ public class BTH {
 
     public void testMethod(BluetoothDevice tmDevice){
         ConnectThread ct = new ConnectThread(tmDevice);
-        new Thread(ct).run();
+        new Thread(ct).start();
 
     }
 
