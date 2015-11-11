@@ -3,16 +3,21 @@ package com.example.anders.fuelshare.PEDO;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.anders.fuelshare.R;
 import com.example.anders.fuelshare.data.BTH;
+import com.example.anders.fuelshare.data.Constants;
 
-public class PEDOact extends Activity {
+public class PEDOact extends Activity implements View.OnClickListener{
 
     TextView distance, battery, usage;
+    Button btn;
     BTH bth;
 
     @Override
@@ -23,13 +28,22 @@ public class PEDOact extends Activity {
         distance = (TextView) findViewById(R.id.pedo_test_distance);
         battery = (TextView) findViewById(R.id.pedo_test_battery_level);
         usage = (TextView) findViewById(R.id.pedo_test_usage);
+        btn = (Button) findViewById(R.id.pedo_test_btn);
 
         distance.setText("Distance traveled: \t0");
         battery.setText("Battery level: \t\t\t\t0");
         usage.setText("use/distance: \t\t\t\t0");
-        bth = BTH.getInstance();
-        //bth.connectBT();
-        bth.testMethod(bth.connectBT());
+
+        btn.setOnClickListener(this);
+    }
+
+    private void updateUI(Handler h){
+        System.out.println("Looking for input data");
+        if(h.hasMessages(Constants.MESSAGE_READ)) {
+            System.out.println(h.obtainMessage(Constants.MESSAGE_READ).toString());
+        } else {
+            System.out.println("Nothing from Input");
+        }
     }
 
 
@@ -53,5 +67,13 @@ public class PEDOact extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        bth = BTH.getInstance();
+        //bth.connectBT();
+        bth.testMethod(bth.connectBT());
+        updateUI(bth.getHandler());
     }
 }

@@ -54,9 +54,9 @@ public class BTH {
 
         if(pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
-                Set<String> mArrayAdapter = null;
+                //Set<String> mArrayAdapter = null;
                 System.out.println(device.getName() + "\n" + device.getAddress());
-                mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                //mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 return device;
             }
             //return pairedDevices;
@@ -86,10 +86,14 @@ public class BTH {
     public boolean checkConnection(){
         return true;
     }
+    public Handler getHandler(){
+        return mHandler;
+    }
 
     public void testMethod(BluetoothDevice tmDevice){
         ConnectThread ct = new ConnectThread(tmDevice);
         new Thread(ct).run();
+
     }
 
     /** ########################################################################################
@@ -116,6 +120,7 @@ public class BTH {
 
             try {
                 mmSocket.connect();
+                System.out.println("Succes, socket is connected");
             } catch (IOException connectException) {
                 try {
                     System.out.println("Failed to connect socket, trying to close socket ...");
@@ -124,6 +129,8 @@ public class BTH {
                     System.out.println("Failed to close connection socket.");
                 }
             }
+            ConnectedThread ct = new ConnectedThread(mmSocket);
+            new Thread(ct).run();
             //manageConnectedSocket(mmSocket);
         }
 
@@ -159,9 +166,14 @@ public class BTH {
             OutputStream tmpOut = null;
 
             try {
+                System.out.println("Making Inputstream ...");
                 tmpIn = socket.getInputStream();
+                System.out.println("Done");
+                System.out.println("Making Outputstream ...");
                 tmpOut = socket.getOutputStream();
-            } catch(IOException e) { }
+                System.out.println("Done");
+            } catch(IOException e) {
+                System.out.println("Failed making streams");}
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
@@ -174,9 +186,11 @@ public class BTH {
             while(true){
                 try {
                     bytes = mmInStream.read(buffer);
+                    System.out.println("" + bytes);
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
                 } catch (IOException e) {
+                    System.out.println("Failed reading from inputstream");
                     break;
                 }
             }
