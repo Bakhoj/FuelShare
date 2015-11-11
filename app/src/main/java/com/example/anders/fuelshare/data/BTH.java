@@ -189,6 +189,7 @@ public class BTH {
                     System.out.println(bytes);
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
+                    System.out.println("Handler says: " + mHandler.obtainMessage(Constants.MESSAGE_READ).toString());
                 } catch (IOException e) {
                     System.out.println("Failed reading from inputstream");
                     break;

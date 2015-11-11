@@ -18,7 +18,7 @@ public class PEDOact extends Activity implements View.OnClickListener{
 
     Handler mHandler;
     TextView distance, battery, usage;
-    Button btn;
+    Button btn, btn2;
     BTH bth;
 
     @Override
@@ -30,12 +30,14 @@ public class PEDOact extends Activity implements View.OnClickListener{
         battery = (TextView) findViewById(R.id.pedo_test_battery_level);
         usage = (TextView) findViewById(R.id.pedo_test_usage);
         btn = (Button) findViewById(R.id.pedo_test_btn);
+        btn2 = (Button) findViewById(R.id.pedo_test_btn2);
 
         distance.setText("Distance traveled: \t0");
         battery.setText("Battery level: \t\t\t\t0");
         usage.setText("use/distance: \t\t\t\t0");
 
         btn.setOnClickListener(this);
+        btn2.setOnClickListener(this);
     }
 
     /**
@@ -44,18 +46,12 @@ public class PEDOact extends Activity implements View.OnClickListener{
      */
     private void updateUI(){
         System.out.println("Looking for input data");
-        new Thread(new Runnable(){
-            public void run(){
-                while(true){
-                    if(mHandler.hasMessages(Constants.MESSAGE_READ)) {
-                        System.out.println(mHandler.obtainMessage(Constants.MESSAGE_READ).toString());
-                    } else {
-                        System.out.println("Nothing from Input");
-                    }
-                }
-            }
-        }).start();
 
+        if(mHandler.hasMessages(Constants.MESSAGE_READ)) {
+            System.out.println(mHandler.obtainMessage(Constants.MESSAGE_READ).toString());
+        } else {
+            System.out.println("Nothing from Input");
+        }
     }
 
 
@@ -86,10 +82,15 @@ public class PEDOact extends Activity implements View.OnClickListener{
      * onClick(View)
      */
     public void onClick(View v) {
-        bth = BTH.getInstance();
-        //bth.connectBT();
-        bth.testMethod(bth.connectBT());
-        mHandler = bth.getHandler();
-        updateUI();
+        switch(v.getId()){
+            case R.id.pedo_test_btn:
+                bth = BTH.getInstance();
+                //bth.connectBT();
+                bth.testMethod(bth.connectBT());
+                mHandler = bth.getHandler();
+                break;
+            case R.id.pedo_test_btn2:
+                updateUI();
+        }
     }
 }
