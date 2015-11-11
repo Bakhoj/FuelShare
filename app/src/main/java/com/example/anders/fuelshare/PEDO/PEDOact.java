@@ -16,6 +16,7 @@ import com.example.anders.fuelshare.data.Constants;
 
 public class PEDOact extends Activity implements View.OnClickListener{
 
+    Handler mHandler;
     TextView distance, battery, usage;
     Button btn;
     BTH bth;
@@ -37,13 +38,24 @@ public class PEDOact extends Activity implements View.OnClickListener{
         btn.setOnClickListener(this);
     }
 
-    private void updateUI(Handler h){
+    /**
+     * updates all the numbers on the display.
+     * should be called everytime new data has been read.
+     */
+    private void updateUI(){
         System.out.println("Looking for input data");
-        if(h.hasMessages(Constants.MESSAGE_READ)) {
-            System.out.println(h.obtainMessage(Constants.MESSAGE_READ).toString());
-        } else {
-            System.out.println("Nothing from Input");
-        }
+        new Thread(new Runnable(){
+            public void run(){
+                while(true){
+                    if(mHandler.hasMessages(Constants.MESSAGE_READ)) {
+                        System.out.println(mHandler.obtainMessage(Constants.MESSAGE_READ).toString());
+                    } else {
+                        System.out.println("Nothing from Input");
+                    }
+                }
+            }
+        }).start();
+
     }
 
 
@@ -70,10 +82,14 @@ public class PEDOact extends Activity implements View.OnClickListener{
     }
 
     @Override
+    /**
+     * onClick(View)
+     */
     public void onClick(View v) {
         bth = BTH.getInstance();
         //bth.connectBT();
         bth.testMethod(bth.connectBT());
-        updateUI(bth.getHandler());
+        mHandler = bth.getHandler();
+        updateUI();
     }
 }

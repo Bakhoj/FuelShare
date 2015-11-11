@@ -130,7 +130,7 @@ public class BTH {
                 }
             }
             ConnectedThread ct = new ConnectedThread(mmSocket);
-            new Thread(ct).run();
+            new Thread(ct).start();
             //manageConnectedSocket(mmSocket);
         }
 
@@ -186,7 +186,7 @@ public class BTH {
             while(true){
                 try {
                     bytes = mmInStream.read(buffer);
-                    System.out.println("" + bytes);
+                    System.out.println(bytes);
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
                 } catch (IOException e) {
