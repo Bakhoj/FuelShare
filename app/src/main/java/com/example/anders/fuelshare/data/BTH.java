@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Handler;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -158,12 +159,14 @@ public class BTH {
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
+        private final DataInputStream dInStream;
         private final OutputStream mmOutStream;
 
         public ConnectedThread(BluetoothSocket socket){
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
+            DataInputStream tmpDin = null;
 
             try {
                 System.out.println("Making Inputstream ...");
@@ -172,24 +175,36 @@ public class BTH {
                 System.out.println("Making Outputstream ...");
                 tmpOut = socket.getOutputStream();
                 System.out.println("Done");
+                tmpDin = new DataInputStream(tmpIn);
             } catch(IOException e) {
                 System.out.println("Failed making streams");}
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
+            dInStream = tmpDin;
         }
 
         public void run() {
             byte[] buffer = new byte[1024];
             int bytes;
 
+
             while(true){
                 try {
-                    bytes = mmInStream.read(buffer);
-                    System.out.println(bytes);
+//                    bytes = mmInStream.read(buffer);
+//                    System.out.println(bytes);
+//                    dInStream.readFully(buffer, 0, 4);
+//                    bytes = dInStream.readByte();
+//                    System.out.println(buffer.toString());
+//                    dInStream.readFully(readByte);
+                    bytes = dInStream.readUnsignedByte();
+//                    System.out.println("READING THIS: " + readByte[0]);
+                    System.out.println("READING UNSIGNED: " + bytes);
+//                    int i = 97 << 8;
+//                    System.out.println("number: " + i);
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
-                    System.out.println("Handler says: " + mHandler.obtainMessage(Constants.MESSAGE_READ).toString());
+//                    System.out.println("Handler says: " + mHandler.obtainMessage());
                 } catch (IOException e) {
                     System.out.println("Failed reading from inputstream");
                     break;

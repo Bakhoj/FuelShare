@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.example.anders.fuelshare.R;
 import com.example.anders.fuelshare.data.BTH;
 import com.example.anders.fuelshare.data.Constants;
+import com.google.android.gms.nearby.messages.Message;
 
 public class PEDOact extends Activity implements View.OnClickListener{
 
@@ -46,9 +47,14 @@ public class PEDOact extends Activity implements View.OnClickListener{
      */
     private void updateUI(){
         System.out.println("Looking for input data");
+        Byte[] buffer = new Byte[1024];
+        int bytes = 0;
+        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1 , buffer);
+        System.out.println(bytes);
+//        System.out.println(buffer);
+        if(mHandler.hasMessages(Constants.MESSAGE_READ, bytes)) {
 
-        if(mHandler.hasMessages(Constants.MESSAGE_READ)) {
-            System.out.println(mHandler.obtainMessage(Constants.MESSAGE_READ).toString());
+
         } else {
             System.out.println("Nothing from Input");
         }
