@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.anders.fuelshare.R;
+import com.example.anders.fuelshare.common.LSH;
 import com.example.anders.fuelshare.data.BTH;
 import com.example.anders.fuelshare.data.Constants;
 import com.google.android.gms.nearby.messages.Message;
@@ -21,11 +22,14 @@ public class PEDOact extends Activity implements View.OnClickListener{
     TextView distance, battery, usage;
     Button btn, btn2;
     BTH bth;
+    LSH lsh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_pedo);
+
+        lsh = LSH.getInstance();
 
         distance = (TextView) findViewById(R.id.pedo_test_distance);
         battery = (TextView) findViewById(R.id.pedo_test_battery_level);
@@ -46,18 +50,21 @@ public class PEDOact extends Activity implements View.OnClickListener{
      * should be called everytime new data has been read.
      */
     private void updateUI(){
-        System.out.println("Looking for input data");
-        Byte[] buffer = new Byte[1024];
-        int bytes = 0;
-        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1 , buffer);
-        System.out.println(bytes);
-//        System.out.println(buffer);
-        if(mHandler.hasMessages(Constants.MESSAGE_READ, bytes)) {
+//        System.out.println("Looking for input data");
+//        Byte[] buffer = new Byte[1024];
+//        int bytes = 0;
+//        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1 , buffer);
+//        System.out.println(bytes);
+////        System.out.println(buffer);
+//        if(mHandler.hasMessages(Constants.MESSAGE_READ, bytes)) {
+//
+//
+//        } else {
+//            System.out.println("Nothing from Input");
+//        }
 
-
-        } else {
-            System.out.println("Nothing from Input");
-        }
+        distance.setText("Distance traveled: \t" +lsh.getDist());
+        battery.setText("Battery level: \t\t\t\t" + lsh.getLastBat());
     }
 
 

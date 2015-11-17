@@ -8,6 +8,8 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Handler;
 
+import com.example.anders.fuelshare.common.LSH;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -161,12 +163,38 @@ public class BTH {
         private final InputStream mmInStream;
         private final DataInputStream dInStream;
         private final OutputStream mmOutStream;
+        private LSH lsh;
+        private int distance;
+
+        private int state;
+        private final int STATE_NONE = 0;
+        private final int STATE_CHARGE_1 = 1;
+        private final int STATE_CHARGE_2 = 2;
+        private final int STATE_CHARGE_3 = 3;
+        private final int STATE_CHARGE_4 = 4;
+//        private final int STATE_CHARGE_5 = 5;
+//        private final int STATE_CHARGE_6 = 6;
+//        private final int STATE_CHARGE_7 = 7;
+//        private final int STATE_CHARGE_8 = 8;
+//        private final int STATE_CHARGE_9 = 9;
+//        private final int STATE_CHARGE_10 = 10;
+//        private final int STATE_CHARGE_11 = 11;
+
+        private final int STATE_ODOMETER_1 = 12;
+        private final int STATE_ODOMETER_2 = 13;
+        private final int STATE_ODOMETER_3 = 14;
+        private final int STATE_ODOMETER_4 = 15;
+        private final int STATE_ODOMETER_5 = 16;
+        private final int STATE_ODOMETER_6 = 17;
+        private final int STATE_ODOMETER_7 = 18;
 
         public ConnectedThread(BluetoothSocket socket){
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
             DataInputStream tmpDin = null;
+            lsh = LSH.getInstance();
+            state = STATE_NONE;
 
             try {
                 System.out.println("Making Inputstream ...");
@@ -187,28 +215,104 @@ public class BTH {
         public void run() {
             byte[] buffer = new byte[1024];
             int bytes;
+//            int[] thing = new int[11];
 
 
             while(true){
                 try {
-//                    bytes = mmInStream.read(buffer);
-//                    System.out.println(bytes);
-//                    dInStream.readFully(buffer, 0, 4);
-//                    bytes = dInStream.readByte();
-//                    System.out.println(buffer.toString());
-//                    dInStream.readFully(readByte);
-                    bytes = dInStream.readUnsignedByte();
-//                    System.out.println("READING THIS: " + readByte[0]);
-                    System.out.println("READING UNSIGNED: " + bytes);
-//                    int i = 97 << 8;
-//                    System.out.println("number: " + i);
-                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget();
-//                    System.out.println("Handler says: " + mHandler.obtainMessage());
+//                    for(int i = 0; i< thing.length;i++) {
+                        bytes = dInStream.readUnsignedByte();
+//                    bytes = dInStream.readUnsignedShort();
+                        System.out.println("READING UNSIGNED: " + bytes);
+                        stateMachine(bytes);
+                        System.out.println("READING UNSIGNED: " + bytes);
+//                        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
+//                                .sendToTarget();
+//                    }
                 } catch (IOException e) {
                     System.out.println("Failed reading from inputstream");
                     break;
                 }
+            }
+        }
+
+        private void stateMachine(int buff) {
+            System.out.println(buff);
+            lsh = LSH.getInstance();
+            switch(state) {
+                case STATE_NONE:
+                    if(buff == 3){
+                        state = STATE_CHARGE_1;
+                        System.out.println("STATE_NONE");
+                        return;
+//                        break;
+                    }
+                    if(buff == 4){
+                        state = STATE_ODOMETER_1;
+                        System.out.println("STATE_NONE");
+                        return;
+//                        break;
+                    }
+                    break;
+                case STATE_CHARGE_1:
+                    if(buff == 116){ state = STATE_CHARGE_2;}
+                    else {state = STATE_NONE; }
+                    System.out.println("STATE_CHARGE_1");
+                    break;
+                case STATE_CHARGE_2:
+                    if(buff == 8){ state = STATE_CHARGE_3;}
+                    else {state = STATE_NONE; }
+                    System.out.println("STATE_CHARGE_2");
+                    break;
+                case STATE_CHARGE_3:
+                    if(buff == 10){ state = STATE_CHARGE_4;}
+                    else {state = STATE_NONE; }
+                    System.out.println("STATE_CHARGE_3");
+                    break;
+                case STATE_CHARGE_4:
+                    lsh.setBat(buff);
+                    state  = STATE_NONE;
+                    System.out.println("STATE_CHARGE_4");
+                    break;
+                case STATE_ODOMETER_1:
+                    if(buff == 18){ state = STATE_ODOMETER_2;}
+                    else {state = STATE_NONE; }
+                    System.out.println("STATE_ODOMETER_1");
+                    break;
+                case STATE_ODOMETER_2:
+                    if(buff == 8){ state = STATE_ODOMETER_3;}
+                    else {state = STATE_NONE; }
+                    System.out.println("STATE_ODOMETER_2");
+                    break;
+                case STATE_ODOMETER_3:
+                    //VELOCITY 1 of 2
+                    state = STATE_ODOMETER_4;
+                    System.out.println("STATE_ODOMETER_3");
+                    break;
+                case STATE_ODOMETER_4:
+                    //VELOCITY 2 of 2
+                    state = STATE_ODOMETER_5;
+                    System.out.println("STATE_ODOMETER_4");
+                    break;
+                case STATE_ODOMETER_5:
+                    //DISTANCE 1 of 3
+                    distance = buff <<16;
+                    state = STATE_ODOMETER_6;
+                    System.out.println("STATE_ODOMETER_5");
+                    break;
+                case STATE_ODOMETER_6:
+                    //DISTANCE 2 of 3
+                    distance += buff <<8;
+                    state = STATE_ODOMETER_7;
+                    System.out.println("STATE_ODOMETER_6");
+                    break;
+                case STATE_ODOMETER_7:
+                    distance += buff;
+                    lsh.setDist(distance);
+                    //DISTANCE 3 of 3
+                    state = STATE_NONE;
+                    System.out.println("STATE_ODOMETER_7");
+                    break;
             }
         }
 
