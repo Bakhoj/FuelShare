@@ -23,17 +23,17 @@ public class LSH {
 
     public synchronized void setBat(double bat) {
         batteryLevel.add(bat);
-        System.out.println(bat);
+        System.out.println("battery stored: " + bat);
     }
     public synchronized double getLastBat() {
         if(!batteryLevel.isEmpty()) {
-            return batteryLevel.get(batteryLevel.size());
+            return batteryLevel.get(batteryLevel.size()-1);
         }
         return 0;
     }
 
     public synchronized void setDist(double dist) {
-        System.out.println(dist);
+        System.out.println("Distance stored: " + dist);
         distance = dist;
     }
     public synchronized double getDist(){

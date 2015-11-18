@@ -62,9 +62,13 @@ public class PEDOact extends Activity implements View.OnClickListener{
 //        } else {
 //            System.out.println("Nothing from Input");
 //        }
-
-        distance.setText("Distance traveled: \t" +lsh.getDist());
-        battery.setText("Battery level: \t\t\t\t" + lsh.getLastBat());
+        System.out.println("PRESSED");
+        double dist = lsh.getDist();
+        double bat = lsh.getLastBat();
+        bat = (bat/2) -5;
+        System.out.println("GOT DATA!");
+        distance.setText("Distance traveled: \t" + dist);
+        battery.setText("Battery level: \t\t\t\t" + bat + "%");
     }
 
 
@@ -104,6 +108,7 @@ public class PEDOact extends Activity implements View.OnClickListener{
                 break;
             case R.id.pedo_test_btn2:
                 updateUI();
+                break;
         }
     }
 }

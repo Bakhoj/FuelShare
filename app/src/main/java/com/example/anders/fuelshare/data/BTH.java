@@ -166,8 +166,15 @@ public class BTH {
         private LSH lsh;
         private int distance;
 
+
+        private int outer_state;
+        private int inner_state;
+        private int length;
+        private final int STATE_CHARGE = 3;
+        private final int STATE_ODOMETER = 4;
+
         private int state;
-        private final int STATE_NONE = 0;
+        private final int STATE_INIT = 0;
         private final int STATE_CHARGE_1 = 1;
         private final int STATE_CHARGE_2 = 2;
         private final int STATE_CHARGE_3 = 3;
@@ -194,7 +201,7 @@ public class BTH {
             OutputStream tmpOut = null;
             DataInputStream tmpDin = null;
             lsh = LSH.getInstance();
-            state = STATE_NONE;
+            state = STATE_INIT;
 
             try {
                 System.out.println("Making Inputstream ...");
@@ -223,7 +230,7 @@ public class BTH {
 //                    for(int i = 0; i< thing.length;i++) {
                         bytes = dInStream.readUnsignedByte();
 //                    bytes = dInStream.readUnsignedShort();
-                        System.out.println("READING UNSIGNED: " + bytes);
+                        //System.out.println("READING UNSIGNED: " + bytes);
                         stateMachine(bytes);
                         System.out.println("READING UNSIGNED: " + bytes);
 //                        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
@@ -236,52 +243,185 @@ public class BTH {
             }
         }
 
-        private void stateMachine(int buff) {
-            System.out.println(buff);
-            lsh = LSH.getInstance();
+        private void stateMachine(int input) {
+            switch(outer_state) {
+                case STATE_INIT:
+                    inner_state = 0;
+                    outer_state = input;
+                    /* måske lave ovenstående om, måske få den til at kalde på
+                    * stateMachine() igen og tilføje inner state check til først ID.
+                    * */
+                    break;
+                case STATE_CHARGE:
+                    switch(inner_state) {
+                        case 0:
+                            if(input == 116) {
+                                inner_state++;
+                            } else { outer_state = STATE_INIT; }
+                            break;
+                        case 1:
+                            length = input+1;
+                            inner_state++;
+                            break;
+                        case 2:
+                            inner_state++;
+                            break;
+                        case 3:
+                            lsh.setBat(input);
+                            inner_state++;
+                            break;
+                        case 4:
+                            if(inner_state < length) {
+                                inner_state++;
+                            } else {outer_state = STATE_INIT; }
+                            break;
+                        case 5:
+                            if(inner_state < length) {
+                                inner_state++;
+                            } else {outer_state = STATE_INIT; }
+                            break;
+                        case 6:
+                            if(inner_state < length) {
+                                inner_state++;
+                            } else {outer_state = STATE_INIT; }
+                            break;
+                        case 7:
+                            if(inner_state < length) {
+                                inner_state++;
+                            } else {outer_state = STATE_INIT; }
+                            break;
+                        case 8:
+                            if(inner_state < length) {
+                                inner_state++;
+                            } else {outer_state = STATE_INIT; }
+                            break;
+                        case 9:
+                            if(inner_state < length) {
+                                inner_state++;
+                            } else {outer_state = STATE_INIT; }
+                            break;
+                        default:
+                            System.out.println("INNER DEFAULT ... WTF?");
+                            outer_state = STATE_INIT;
+                            break;
+                    }
+                    break;
+
+                case STATE_ODOMETER:
+                    switch(inner_state) {
+                        case 0:
+                            if(input == 18) {
+                                inner_state++;
+                            } else { outer_state = STATE_INIT; }
+                            break;
+                        case 1:
+                            length = input+1;
+                            inner_state++;
+                            break;
+                        case 2:
+                            //VELOCITY 1 of 2
+                            inner_state++;
+                            break;
+                        case 3:
+                            //VELOCITY 2 of 2
+                            inner_state++;
+                            break;
+                        case 4:
+                            //DISTANCE 1 of 3
+                            if(inner_state < length) {
+                                distance = input<<16;
+                                inner_state++;
+                            } else {outer_state = STATE_INIT; }
+                            break;
+                        case 5:
+                            //DISTANCE 2 of 3
+                            if(inner_state < length) {
+                                distance += input<<8;
+                                inner_state++;
+                            } else {outer_state = STATE_INIT; }
+                            break;
+                        case 6:
+                            //DISTANCE 3 of 3
+                            if(inner_state < length) {
+                                distance += input;
+                                lsh.setDist(distance);
+                                inner_state++;
+                            } else {outer_state = STATE_INIT; }
+                            break;
+                        case 7:
+                            if(inner_state < length) {
+                                inner_state++;
+                            } else {outer_state = STATE_INIT; }
+                            break;
+                        case 8:
+                            if(inner_state < length) {
+                                inner_state++;
+                            } else {outer_state = STATE_INIT; }
+                            break;
+                        case 9:
+                            if(inner_state < length) {
+                                inner_state++;
+                            } else {outer_state = STATE_INIT; }
+                            break;
+                        default:
+                            System.out.println("INNER DEFAULT ... WTF?");
+                            outer_state = STATE_INIT;
+                            break;
+                    }
+                    break;
+
+                default:
+                    System.out.println("DEFAULT ... WTF?");
+                    outer_state = STATE_INIT;
+                    break;
+            }
+        }
+
+        /*
+        private void stateMacine(int buff) {
+            //System.out.println(buff);
+            //lsh = LSH.getInstance();
             switch(state) {
-                case STATE_NONE:
+                case STATE_INIT:
                     if(buff == 3){
                         state = STATE_CHARGE_1;
                         System.out.println("STATE_NONE");
-                        return;
-//                        break;
+                        break;
                     }
                     if(buff == 4){
                         state = STATE_ODOMETER_1;
                         System.out.println("STATE_NONE");
-                        return;
-//                        break;
+                        break;
                     }
                     break;
                 case STATE_CHARGE_1:
                     if(buff == 116){ state = STATE_CHARGE_2;}
-                    else {state = STATE_NONE; }
+                    else {state = STATE_INIT; }
                     System.out.println("STATE_CHARGE_1");
                     break;
                 case STATE_CHARGE_2:
                     if(buff == 8){ state = STATE_CHARGE_3;}
-                    else {state = STATE_NONE; }
+                    else {state = STATE_INIT; }
                     System.out.println("STATE_CHARGE_2");
                     break;
                 case STATE_CHARGE_3:
                     if(buff == 10){ state = STATE_CHARGE_4;}
-                    else {state = STATE_NONE; }
+                    else {state = STATE_INIT; }
                     System.out.println("STATE_CHARGE_3");
                     break;
                 case STATE_CHARGE_4:
                     lsh.setBat(buff);
-                    state  = STATE_NONE;
+                    state  = STATE_INIT;
                     System.out.println("STATE_CHARGE_4");
                     break;
                 case STATE_ODOMETER_1:
                     if(buff == 18){ state = STATE_ODOMETER_2;}
-                    else {state = STATE_NONE; }
+                    else {state = STATE_INIT; }
                     System.out.println("STATE_ODOMETER_1");
                     break;
                 case STATE_ODOMETER_2:
                     if(buff == 8){ state = STATE_ODOMETER_3;}
-                    else {state = STATE_NONE; }
+                    else {state = STATE_INIT; }
                     System.out.println("STATE_ODOMETER_2");
                     break;
                 case STATE_ODOMETER_3:
@@ -310,11 +450,14 @@ public class BTH {
                     distance += buff;
                     lsh.setDist(distance);
                     //DISTANCE 3 of 3
-                    state = STATE_NONE;
+                    state = STATE_INIT;
                     System.out.println("STATE_ODOMETER_7");
                     break;
+                default:
+                    System.out.println("Default state ... wtf?");
+                    break;
             }
-        }
+        } */
 
         public void write(byte[] bytes) {
             try {
@@ -332,4 +475,5 @@ public class BTH {
             }
         }
     }
+
 }
