@@ -16,6 +16,12 @@ import com.example.anders.fuelshare.data.BTH;
 import com.example.anders.fuelshare.data.Constants;
 import com.google.android.gms.nearby.messages.Message;
 
+/**
+ * PEDO meter activity
+ *
+ * The activity shows the PEDO meter which will give the information from the car to the user.
+ * basically PEDO UI logic
+ */
 public class PEDOact extends Activity implements View.OnClickListener{
 
     Handler mHandler;
@@ -50,18 +56,6 @@ public class PEDOact extends Activity implements View.OnClickListener{
      * should be called everytime new data has been read.
      */
     private void updateUI(){
-//        System.out.println("Looking for input data");
-//        Byte[] buffer = new Byte[1024];
-//        int bytes = 0;
-//        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1 , buffer);
-//        System.out.println(bytes);
-////        System.out.println(buffer);
-//        if(mHandler.hasMessages(Constants.MESSAGE_READ, bytes)) {
-//
-//
-//        } else {
-//            System.out.println("Nothing from Input");
-//        }
         System.out.println("PRESSED");
         double dist = lsh.getDist();
         double bat = lsh.getLastBat();
