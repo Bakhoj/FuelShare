@@ -162,7 +162,7 @@ public class BTH {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final DataInputStream dInStream;
-        private final OutputStream mmOutStream;
+//        private final OutputStream mmOutStream;
         private LSH lsh;
         private int distance;
 
@@ -170,12 +170,12 @@ public class BTH {
         private int outer_state;
         private int inner_state;
         private int length;
-        private final int STATE_CHARGE = 3;
-        private final int STATE_ODOMETER = 4;
-
         private int state;
         private final int STATE_INIT = 0;
-        private final int STATE_CHARGE_1 = 1;
+        private final int STATE_CHARGE = 374;   //maybe 884 or 3 and 116
+        private final int STATE_ODOMETER = 412; //maybe 1042 or 4 and 18
+
+/*      private final int STATE_CHARGE_1 = 1;
         private final int STATE_CHARGE_2 = 2;
         private final int STATE_CHARGE_3 = 3;
         private final int STATE_CHARGE_4 = 4;
@@ -194,12 +194,12 @@ public class BTH {
         private final int STATE_ODOMETER_5 = 16;
         private final int STATE_ODOMETER_6 = 17;
         private final int STATE_ODOMETER_7 = 18;
-
+*/
         public ConnectedThread(BluetoothSocket socket){
             mmSocket = socket;
             InputStream tmpIn = null;
-            OutputStream tmpOut = null;
-            DataInputStream tmpDin = null;
+//            OutputStream tmpOut = null;
+//            DataInputStream tmpDin = null;
             lsh = LSH.getInstance();
             state = STATE_INIT;
 
@@ -207,32 +207,32 @@ public class BTH {
                 System.out.println("Making Inputstream ...");
                 tmpIn = socket.getInputStream();
                 System.out.println("Done");
-                System.out.println("Making Outputstream ...");
-                tmpOut = socket.getOutputStream();
-                System.out.println("Done");
-                tmpDin = new DataInputStream(tmpIn);
+//                System.out.println("Making Outputstream ...");
+//                tmpOut = socket.getOutputStream();
+//                System.out.println("Done");
+//                tmpDin = new DataInputStream(tmpIn);
             } catch(IOException e) {
                 System.out.println("Failed making streams");}
 
             mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-            dInStream = tmpDin;
+//            mmOutStream = tmpOut;
+//            dInStream = tmpDin;
+            dInStream = null;
         }
 
         public void run() {
             byte[] buffer = new byte[1024];
             int bytes;
-//            int[] thing = new int[11];
-
 
             while(true){
                 try {
 //                    for(int i = 0; i< thing.length;i++) {
-                        bytes = dInStream.readUnsignedByte();
+//                        bytes = dInStream.readUnsignedByte();
 //                    bytes = dInStream.readUnsignedShort();
-                        //System.out.println("READING UNSIGNED: " + bytes);
-                        stateMachine(bytes);
+                        bytes = mmInStream.read(buffer);
                         System.out.println("READING UNSIGNED: " + bytes);
+                        stateMachine(bytes);
+                        //System.out.println("READING UNSIGNED: " + bytes);
 //                        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
 //                                .sendToTarget();
 //                    }
@@ -248,57 +248,42 @@ public class BTH {
                 case STATE_INIT:
                     inner_state = 0;
                     outer_state = input;
+
                     /* måske lave ovenstående om, måske få den til at kalde på
                     * stateMachine() igen og tilføje inner state check til først ID.
                     * */
                     break;
                 case STATE_CHARGE:
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                            + "\nSTATE_CHARGE\n"
+                            + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                            );
                     switch(inner_state) {
                         case 0:
-                            if(input == 116) {
-                                inner_state++;
-                            } else { outer_state = STATE_INIT; }
+                            inner_state++;
                             break;
                         case 1:
-                            length = input+1;
+                            lsh.setBat(input);
+                            Logic.instance.setBattery(input);
                             inner_state++;
                             break;
                         case 2:
                             inner_state++;
                             break;
                         case 3:
-                            lsh.setBat(input);
                             inner_state++;
                             break;
                         case 4:
-                            if(inner_state < length) {
-                                inner_state++;
-                            } else {outer_state = STATE_INIT; }
+                            inner_state++;
                             break;
                         case 5:
-                            if(inner_state < length) {
-                                inner_state++;
-                            } else {outer_state = STATE_INIT; }
+                            inner_state++;
                             break;
                         case 6:
-                            if(inner_state < length) {
-                                inner_state++;
-                            } else {outer_state = STATE_INIT; }
+                            inner_state++;
                             break;
                         case 7:
-                            if(inner_state < length) {
-                                inner_state++;
-                            } else {outer_state = STATE_INIT; }
-                            break;
-                        case 8:
-                            if(inner_state < length) {
-                                inner_state++;
-                            } else {outer_state = STATE_INIT; }
-                            break;
-                        case 9:
-                            if(inner_state < length) {
-                                inner_state++;
-                            } else {outer_state = STATE_INIT; }
+                            inner_state++;
                             break;
                         default:
                             System.out.println("INNER DEFAULT ... WTF?");
@@ -308,60 +293,44 @@ public class BTH {
                     break;
 
                 case STATE_ODOMETER:
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                                    + "\nSTATE_ODOMETER\n"
+                                    + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                    );
                     switch(inner_state) {
                         case 0:
-                            if(input == 18) {
-                                inner_state++;
-                            } else { outer_state = STATE_INIT; }
-                            break;
-                        case 1:
-                            length = input+1;
-                            inner_state++;
-                            break;
-                        case 2:
                             //VELOCITY 1 of 2
                             inner_state++;
                             break;
-                        case 3:
+                        case 1:
                             //VELOCITY 2 of 2
                             inner_state++;
                             break;
-                        case 4:
+                        case 2:
                             //DISTANCE 1 of 3
-                            if(inner_state < length) {
-                                distance = input<<16;
-                                inner_state++;
-                            } else {outer_state = STATE_INIT; }
+                            distance = input<<16;
+                            inner_state++;
+                            break;
+                        case 3:
+                            //DISTANCE 2 of 3
+                            distance += input<<8;
+                            inner_state++;
+                            break;
+                        case 4:
+                            //DISTANCE 3 of 3
+                            distance += input;
+                            lsh.setDist(distance);
+                            Logic.instance.setDistance(distance);
+                            inner_state++;
                             break;
                         case 5:
-                            //DISTANCE 2 of 3
-                            if(inner_state < length) {
-                                distance += input<<8;
-                                inner_state++;
-                            } else {outer_state = STATE_INIT; }
+                            inner_state++;
                             break;
                         case 6:
-                            //DISTANCE 3 of 3
-                            if(inner_state < length) {
-                                distance += input;
-                                lsh.setDist(distance);
-                                inner_state++;
-                            } else {outer_state = STATE_INIT; }
+                            inner_state++;
                             break;
                         case 7:
-                            if(inner_state < length) {
-                                inner_state++;
-                            } else {outer_state = STATE_INIT; }
-                            break;
-                        case 8:
-                            if(inner_state < length) {
-                                inner_state++;
-                            } else {outer_state = STATE_INIT; }
-                            break;
-                        case 9:
-                            if(inner_state < length) {
-                                inner_state++;
-                            } else {outer_state = STATE_INIT; }
+                            inner_state++;
                             break;
                         default:
                             System.out.println("INNER DEFAULT ... WTF?");
@@ -371,7 +340,7 @@ public class BTH {
                     break;
 
                 default:
-                    System.out.println("DEFAULT ... WTF?");
+                    System.out.println("OUTER DEFAULT");
                     outer_state = STATE_INIT;
                     break;
             }
@@ -459,12 +428,12 @@ public class BTH {
             }
         } */
 
-        public void write(byte[] bytes) {
+/*        public void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
             } catch (IOException e) {}
         }
-
+*/
         public void cancel() {
             try {
                 System.out.println("Closing bluetooth socket ...");

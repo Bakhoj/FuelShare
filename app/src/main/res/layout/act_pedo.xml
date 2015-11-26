@@ -61,5 +61,14 @@ tools:context="com.example.anders.fuelshare.PEDO.PEDOact">
             android:id="@+id/pedo_test_btn2"
             android:layout_below="@+id/pedo_test_btn"
             android:layout_centerHorizontal="true" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/pedo_test_bat_image"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/battery_4" />
     </RelativeLayout>
 </RelativeLayout>

@@ -8,12 +8,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.anders.fuelshare.R;
 import com.example.anders.fuelshare.common.LSH;
 import com.example.anders.fuelshare.data.BTH;
 import com.example.anders.fuelshare.data.Constants;
+import com.example.anders.fuelshare.data.Logic;
 import com.google.android.gms.nearby.messages.Message;
 
 /**
@@ -26,6 +28,7 @@ public class PEDOact extends Activity implements View.OnClickListener{
 
     Handler mHandler;
     TextView distance, battery, usage;
+    ImageView batImage;
     Button btn, btn2;
     BTH bth;
     LSH lsh;
@@ -42,6 +45,7 @@ public class PEDOact extends Activity implements View.OnClickListener{
         usage = (TextView) findViewById(R.id.pedo_test_usage);
         btn = (Button) findViewById(R.id.pedo_test_btn);
         btn2 = (Button) findViewById(R.id.pedo_test_btn2);
+        batImage = (ImageView) findViewById(R.id.pedo_test_bat_image);
 
         distance.setText("Distance traveled: \t0");
         battery.setText("Battery level: \t\t\t\t0");
@@ -62,7 +66,20 @@ public class PEDOact extends Activity implements View.OnClickListener{
         bat = (bat/2) -5;
         System.out.println("GOT DATA!");
         distance.setText("Distance traveled: \t" + dist);
+        distance.setText("Distance traveled: \t" + Logic.instance.getDistance());
         battery.setText("Battery level: \t\t\t\t" + bat + "%");
+        battery.setText("Battery level: \t\t\t\t" + Logic.instance.getBatteryProcent() + "%");
+        bat = Logic.instance.getBatteryProcent();
+
+        if(bat > 80) {
+            batImage.setImageResource(R.drawable.battery_4);
+        } else if(bat > 60) {
+            batImage.setImageResource(R.drawable.battery_3);
+        } else if(bat > 40) {
+            batImage.setImageResource(R.drawable.battery_2);
+        } else {
+            batImage.setImageResource(R.drawable.battery_1);
+        }
     }
 
 
