@@ -73,9 +73,9 @@ public class PEDOact extends Activity implements View.OnClickListener{
 
         if(bat > 80) {
             batImage.setImageResource(R.drawable.battery_4);
-        } else if(bat > 60) {
+        } else if(bat > 50) {
             batImage.setImageResource(R.drawable.battery_3);
-        } else if(bat > 40) {
+        } else if(bat > 30) {
             batImage.setImageResource(R.drawable.battery_2);
         } else {
             batImage.setImageResource(R.drawable.battery_1);

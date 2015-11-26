@@ -18,7 +18,7 @@ public class Logic {
 
     private void testData(){
         distance = new int[] {21000, 24000};
-        battery = new int[] {211, 187};
+        battery = new int[] {211, 187, 50, 120};
     }
 
     /**
