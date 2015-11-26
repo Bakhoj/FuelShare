@@ -1,7 +1,6 @@
 package com.example.anders.fuelshare.PEDO;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -14,9 +13,7 @@ import android.widget.TextView;
 import com.example.anders.fuelshare.R;
 import com.example.anders.fuelshare.common.LSH;
 import com.example.anders.fuelshare.data.BTH;
-import com.example.anders.fuelshare.data.Constants;
 import com.example.anders.fuelshare.data.Logic;
-import com.google.android.gms.nearby.messages.Message;
 
 /**
  * PEDO meter activity

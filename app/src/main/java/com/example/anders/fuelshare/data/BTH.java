@@ -161,7 +161,7 @@ public class BTH {
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
-        private final DataInputStream dInStream;
+//        private final DataInputStream dInStream;
 //        private final OutputStream mmOutStream;
         private LSH lsh;
         private int distance;
@@ -169,39 +169,16 @@ public class BTH {
 
         private int outer_state;
         private int inner_state;
-        private int length;
-        private int state;
         private final int STATE_INIT = 0;
         private final int STATE_CHARGE = 374;   //maybe 884 or 3 and 116
         private final int STATE_ODOMETER = 412; //maybe 1042 or 4 and 18
 
-/*      private final int STATE_CHARGE_1 = 1;
-        private final int STATE_CHARGE_2 = 2;
-        private final int STATE_CHARGE_3 = 3;
-        private final int STATE_CHARGE_4 = 4;
-//        private final int STATE_CHARGE_5 = 5;
-//        private final int STATE_CHARGE_6 = 6;
-//        private final int STATE_CHARGE_7 = 7;
-//        private final int STATE_CHARGE_8 = 8;
-//        private final int STATE_CHARGE_9 = 9;
-//        private final int STATE_CHARGE_10 = 10;
-//        private final int STATE_CHARGE_11 = 11;
-
-        private final int STATE_ODOMETER_1 = 12;
-        private final int STATE_ODOMETER_2 = 13;
-        private final int STATE_ODOMETER_3 = 14;
-        private final int STATE_ODOMETER_4 = 15;
-        private final int STATE_ODOMETER_5 = 16;
-        private final int STATE_ODOMETER_6 = 17;
-        private final int STATE_ODOMETER_7 = 18;
-*/
         public ConnectedThread(BluetoothSocket socket){
             mmSocket = socket;
             InputStream tmpIn = null;
 //            OutputStream tmpOut = null;
 //            DataInputStream tmpDin = null;
             lsh = LSH.getInstance();
-            state = STATE_INIT;
 
             try {
                 System.out.println("Making Inputstream ...");
@@ -217,7 +194,7 @@ public class BTH {
             mmInStream = tmpIn;
 //            mmOutStream = tmpOut;
 //            dInStream = tmpDin;
-            dInStream = null;
+//            dInStream = null;
         }
 
         public void run() {
@@ -226,16 +203,24 @@ public class BTH {
 
             while(true){
                 try {
-//                    for(int i = 0; i< thing.length;i++) {
-//                        bytes = dInStream.readUnsignedByte();
+//                    bytes = dInStream.readUnsignedByte();
 //                    bytes = dInStream.readUnsignedShort();
-                        bytes = mmInStream.read(buffer);
-                        System.out.println("READING UNSIGNED: " + bytes);
-                        stateMachine(bytes);
+//                    bytes = dInStream.readByte();
+                    bytes = mmInStream.read();
+                    int available = mmInStream.available();
+                    System.out.println("READING UNSIGNED: " + bytes + " available bytes: " + available);
+                    stateMachine(bytes);
+
+//                    bytes = mmInStream.read(buffer);
+//                    for(int i = 0; i < bytes; i++){
+//                        System.out.println("READING UNSIGNED: " + buffer[i]);
+//                        stateMachine(bytes);
+//                    }
+
+
                         //System.out.println("READING UNSIGNED: " + bytes);
 //                        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
 //                                .sendToTarget();
-//                    }
                 } catch (IOException e) {
                     System.out.println("Failed reading from inputstream");
                     break;
@@ -247,8 +232,10 @@ public class BTH {
             switch(outer_state) {
                 case STATE_INIT:
                     inner_state = 0;
-                    outer_state = input;
-
+                    if(input == STATE_CHARGE || input == STATE_ODOMETER) {
+                        outer_state = input;
+                        System.out.println("FOUND A MATCH!");
+                    }
                     /* måske lave ovenstående om, måske få den til at kalde på
                     * stateMachine() igen og tilføje inner state check til først ID.
                     * */
