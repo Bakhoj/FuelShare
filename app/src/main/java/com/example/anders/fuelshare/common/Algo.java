@@ -4,6 +4,7 @@ package com.example.anders.fuelshare.common;
  * @author Lars
  *
  * info: This Class handles all the calculations for PEDO
+ * TODO: DELETE class
  */
 public class Algo {
 

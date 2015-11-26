@@ -19,6 +19,7 @@ public class Logic {
     private void testData(){
         distance = new int[] {21000, 24000};
         battery = new int[] {211, 187, 50, 120};
+        /* Change the battery and distance from int[] to own classes, containing int and datestamp*/
     }
 
     /**
@@ -70,5 +71,9 @@ public class Logic {
      */
     public int getBatteryProcent() {
         return (battery[battery.length-1]/2)-5;
+    }
+
+    public int getRemainingDistance(){
+        return 0;
     }
 }
