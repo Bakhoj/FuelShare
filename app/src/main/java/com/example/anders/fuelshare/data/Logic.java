@@ -1,5 +1,7 @@
 package com.example.anders.fuelshare.data;
 
+import android.util.Log;
+
 /**
  * Created by anders on 25-11-2015.
  *
@@ -10,10 +12,17 @@ public class Logic {
     public static Logic instance = new Logic();
     private int[] distance;
     private int[] battery;
+    private int velocity;
 
 
     private Logic() {
-        testData();
+        startData(); //testData();
+    }
+
+    private void startData(){
+        distance = new int[] {};
+        battery = new int[] {};
+        velocity = 0;
     }
 
     private void testData(){
@@ -34,6 +43,7 @@ public class Logic {
         }
         tempList[tempList.length - 1] = dist;
         distance = tempList;
+        Log.i("Fuelshare logic", "Distance stored: "+dist);
     }
 
     /**
@@ -55,6 +65,7 @@ public class Logic {
         }
         tempList[tempList.length - 1] = bat;
         battery = tempList;
+        Log.i("Fuelshare logic", "battery stored: "+bat);
     }
 
     /**
@@ -75,5 +86,13 @@ public class Logic {
 
     public int getRemainingDistance(){
         return 0;
+    }
+
+    public void setVelocity(int velocity) {
+        this.velocity = velocity - 65024;
+    }
+
+    public int getVelocity() {
+        return velocity;
     }
 }

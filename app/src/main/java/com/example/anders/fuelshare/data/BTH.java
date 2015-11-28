@@ -7,13 +7,17 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Handler;
+import android.util.Log;
 
 import com.example.anders.fuelshare.common.LSH;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -93,10 +97,16 @@ public class BTH {
         return mHandler;
     }
 
+    private ConnectThread ct;
+
     public void testMethod(BluetoothDevice tmDevice){
-        ConnectThread ct = new ConnectThread(tmDevice);
+        ct = new ConnectThread(tmDevice);
         new Thread(ct).start();
 
+    }
+
+    public void close(){
+        ct.cancel();
     }
 
     /** ########################################################################################
@@ -118,6 +128,8 @@ public class BTH {
             } catch(IOException e){ }
             mmSocket = tmp;
         }
+        ConnectedThread ct;
+
         public void run() {
             mBluetoothAdapter.cancelDiscovery();
 
@@ -132,7 +144,7 @@ public class BTH {
                     System.out.println("Failed to close connection socket.");
                 }
             }
-            ConnectedThread ct = new ConnectedThread(mmSocket);
+            ct = new ConnectedThread(mmSocket);
             new Thread(ct).start();
             //manageConnectedSocket(mmSocket);
         }
@@ -146,6 +158,7 @@ public class BTH {
 
         public void cancel() {
             try {
+                ct.cancel();
                 System.out.println("Closing bluetooth socket ...");
                 mmSocket.close();
                 System.out.println("Bluetooth socket has been closed");
@@ -161,7 +174,7 @@ public class BTH {
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
-//        private final DataInputStream dInStream;
+        private final DataInputStream dInStream;
 //        private final OutputStream mmOutStream;
         private LSH lsh;
         private int distance;
@@ -170,14 +183,15 @@ public class BTH {
         private int outer_state;
         private int inner_state;
         private final int STATE_INIT = 0;
-        private final int STATE_CHARGE = 374;   //maybe 884 or 3 and 116
-        private final int STATE_ODOMETER = 412; //maybe 1042 or 4 and 18
+        private final int STATE_CHARGE = 884;   //maybe 884 or 3 and 116    0x374
+        private final int STATE_ODOMETER = 1042; //maybe 1042 or 4 and 18    0x412
+        private int velocity;
 
         public ConnectedThread(BluetoothSocket socket){
             mmSocket = socket;
             InputStream tmpIn = null;
 //            OutputStream tmpOut = null;
-//            DataInputStream tmpDin = null;
+            DataInputStream tmpDin = null;
             lsh = LSH.getInstance();
 
             try {
@@ -187,13 +201,13 @@ public class BTH {
 //                System.out.println("Making Outputstream ...");
 //                tmpOut = socket.getOutputStream();
 //                System.out.println("Done");
-//                tmpDin = new DataInputStream(tmpIn);
+                tmpDin = new DataInputStream(tmpIn);
             } catch(IOException e) {
                 System.out.println("Failed making streams");}
 
             mmInStream = tmpIn;
 //            mmOutStream = tmpOut;
-//            dInStream = tmpDin;
+            dInStream = tmpDin;
 //            dInStream = null;
         }
 
@@ -201,56 +215,85 @@ public class BTH {
             byte[] buffer = new byte[1024];
             int bytes;
 
-            while(true){
-                try {
+            //                try {
 //                    bytes = dInStream.readUnsignedByte();
 //                    bytes = dInStream.readUnsignedShort();
 //                    bytes = dInStream.readByte();
-                    bytes = mmInStream.read();
-                    int available = mmInStream.available();
-                    System.out.println("READING UNSIGNED: " + bytes + " available bytes: " + available);
-                    stateMachine(bytes);
-
+//                    java.util.Scanner s = new java.util.Scanner(mmInStream).useDelimiter("\\n");
+//                    String output = s.hasNext() ? s.next() : "";
+//                    System.out.println("Reading: " + output);
+/*
+bytes = mmInStream.read(buffer);
+for(int i = 0; i < bytes; i++){
+    stateMachine(buffer[i]);
+    System.out.println("READING UNSIGNED: " + buffer[i] + ".");
+    System.out.println("Length in reading: " + (bytes-i) + ".");
+}
+*///                    int available = mmInStream.available();
+//                    System.out.println("READING UNSIGNED: " + bytes);
+//                    stateMachine(bytes);
 //                    bytes = mmInStream.read(buffer);
 //                    for(int i = 0; i < bytes; i++){
 //                        System.out.println("READING UNSIGNED: " + buffer[i]);
 //                        stateMachine(bytes);
 //                    }
-
-
-                        //System.out.println("READING UNSIGNED: " + bytes);
+//System.out.println("READING UNSIGNED: " + bytes);
 //                        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
 //                                .sendToTarget();
-                } catch (IOException e) {
+/*                } catch (IOException e) {
                     System.out.println("Failed reading from inputstream");
                     break;
-                }
+                } */
+            while(true) try {
+
+                String input = dInStream.readLine();
+//                String s2 = "Reading||" + input + "\n\n";
+//                Log.i("FuelShare raw", s2);
+
+                    if(input.contains("ID:") && input.contains("Data:")) {
+                        outer_state = STATE_INIT;
+                        String[] first = input.split("  Data: ");
+                        String id = first[0].replace("ID:", "");
+                        id = id.replace(" ", "");
+                        id = id.replace("\n", "");
+                        String[] data = first[1].split(" ");
+//                        Log.i("Fuelshare split id", "id:" + id);
+                        try {
+                            stateMachine(Integer.parseInt(id, 16));
+                        } catch (NumberFormatException e){ }
+                        for(String s : data){
+                            String st = s.replace(" ", "");
+                            String str = st.replace("\n", "");
+//                            Log.i("Fuelshare split data", "data:" + str);
+                            try {
+                                stateMachine(Integer.parseInt(str, 16));
+                            } catch (NumberFormatException e){ }
+                        }
+                    }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
         private void stateMachine(int input) {
+//            Log.d("Fuelshare StateMachine", ""+input);
             switch(outer_state) {
                 case STATE_INIT:
                     inner_state = 0;
                     if(input == STATE_CHARGE || input == STATE_ODOMETER) {
                         outer_state = input;
-                        System.out.println("FOUND A MATCH!");
                     }
                     /* måske lave ovenstående om, måske få den til at kalde på
                     * stateMachine() igen og tilføje inner state check til først ID.
                     * */
                     break;
                 case STATE_CHARGE:
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-                            + "\nSTATE_CHARGE\n"
-                            + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-                            );
                     switch(inner_state) {
                         case 0:
                             inner_state++;
                             break;
                         case 1:
-                            lsh.setBat(input);
+//                            lsh.setBat(input);
                             Logic.instance.setBattery(input);
                             inner_state++;
                             break;
@@ -280,17 +323,16 @@ public class BTH {
                     break;
 
                 case STATE_ODOMETER:
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-                                    + "\nSTATE_ODOMETER\n"
-                                    + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-                    );
                     switch(inner_state) {
                         case 0:
                             //VELOCITY 1 of 2
+                            velocity = input<<8;
                             inner_state++;
                             break;
                         case 1:
                             //VELOCITY 2 of 2
+                            velocity += input;
+                            Logic.instance.setVelocity(velocity);
                             inner_state++;
                             break;
                         case 2:
@@ -306,7 +348,7 @@ public class BTH {
                         case 4:
                             //DISTANCE 3 of 3
                             distance += input;
-                            lsh.setDist(distance);
+//                            lsh.setDist(distance);
                             Logic.instance.setDistance(distance);
                             inner_state++;
                             break;
@@ -320,14 +362,14 @@ public class BTH {
                             inner_state++;
                             break;
                         default:
-                            System.out.println("INNER DEFAULT ... WTF?");
+                            Log.d("Fuelshare StateMachine", "INNER DEFAULT ... WTF?");
                             outer_state = STATE_INIT;
                             break;
                     }
                     break;
 
                 default:
-                    System.out.println("OUTER DEFAULT");
+                    Log.d("Fuelshare StateMachine", "OUTER DEFAULT");
                     outer_state = STATE_INIT;
                     break;
             }

@@ -57,16 +57,10 @@ public class PEDOact extends Activity implements View.OnClickListener{
      * should be called everytime new data has been read.
      */
     private void updateUI(){
-        System.out.println("PRESSED");
-        double dist = lsh.getDist();
-        double bat = lsh.getLastBat();
-        bat = (bat/2) -5;
-        System.out.println("GOT DATA!");
-        distance.setText("Distance traveled: \t" + dist);
+        double bat = Logic.instance.getBatteryProcent();
         distance.setText("Distance traveled: \t" + Logic.instance.getDistance());
         battery.setText("Battery level: \t\t\t\t" + bat + "%");
-        battery.setText("Battery level: \t\t\t\t" + Logic.instance.getBatteryProcent() + "%");
-        bat = Logic.instance.getBatteryProcent();
+        usage.setText("Velocity: \t\t\t\t" + Logic.instance.getVelocity());
 
         if(bat > 80) {
             batImage.setImageResource(R.drawable.battery_4);
@@ -79,6 +73,16 @@ public class PEDOact extends Activity implements View.OnClickListener{
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        bth.close();
+        super.onDestroy();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
