@@ -58,9 +58,9 @@ public class PEDOact extends Activity implements View.OnClickListener{
      */
     private void updateUI(){
         double bat = Logic.instance.getBatteryProcent();
-        distance.setText("Distance traveled: \t" + Logic.instance.getDistance());
-        battery.setText("Battery level: \t\t\t\t" + bat + "%");
-        usage.setText("Velocity: \t\t\t\t" + Logic.instance.getVelocity());
+        distance.setText(String.format("Distance traveled: \t%d", Logic.instance.getDistance()));
+        battery.setText(String.format("Battery level: \t\t\t\t%s%%", bat));
+        usage.setText(String.format("Velocity: \t\t\t\t%d", Logic.instance.getVelocity()));
 
         if(bat > 80) {
             batImage.setImageResource(R.drawable.battery_4);
@@ -71,11 +71,6 @@ public class PEDOact extends Activity implements View.OnClickListener{
         } else {
             batImage.setImageResource(R.drawable.battery_1);
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     @Override

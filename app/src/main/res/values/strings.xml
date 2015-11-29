@@ -12,4 +12,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">map</string>
     <string name="google_maps_key">AIzaSyBcRLxywf1sEySiP2vsSWNNJjC9wEjVgok</string>
+
+    <!-- PEDO Strings -->
+    <!-- TEST STRINGS-->
+    <string name="distance_test">Distance traveled: 	%f</string>
+    <string name="battery_test">Battery level: 				%f</string>
+    <string name="velocity_test">Velocity: 				%f</string>
+
 </resources>
