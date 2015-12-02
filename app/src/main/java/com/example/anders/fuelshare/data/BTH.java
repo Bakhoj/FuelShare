@@ -3,21 +3,14 @@ package com.example.anders.fuelshare.data;
 import android.bluetooth.BluetoothAdapter;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 
-import com.example.anders.fuelshare.common.LSH;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.ParseException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,6 +27,7 @@ public class BTH {
 
     private static BTH ourInstance = new BTH();
     private static Handler mHandler;
+    private static TheRunner theThread;
 
     /**
      * getInstance()
@@ -42,6 +36,7 @@ public class BTH {
      * @return ourInstance
      */
     public static BTH getInstance(){ return ourInstance;}
+    public static Thread getTheThread() { return theThread;}
     private BTH(){
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(mBluetoothAdapter == null){
@@ -102,11 +97,52 @@ public class BTH {
     public void testMethod(BluetoothDevice tmDevice){
         ct = new ConnectThread(tmDevice);
         new Thread(ct).start();
-
+        /*if(theThread == null ){
+            theThread = new TheRunner();
+        }
+        new Thread(theThread).start();*/
     }
 
     public void close(){
         ct.cancel();
+        theThread.cancel();
+    }
+
+    /** ########################################################################################
+     *                      PRIVATE TheRunner
+     *  ########################################################################################
+     */
+    private class TheRunner extends Thread {
+        ConnectThread cttr;
+        Boolean keepRunning;
+        BTH bth;
+        public TheRunner(){
+            bth = BTH.getInstance();
+            BluetoothDevice tmDevice = bth.connectBT();
+            cttr = new ConnectThread(tmDevice);
+            keepRunning = true;
+        }
+
+        @Override
+        public void run() {
+            BluetoothDevice tmDevice = BTH.getInstance().connectBT();
+            cttr = new ConnectThread(tmDevice);
+            new Thread(cttr).start();
+
+            while(keepRunning){
+                if(!cttr.getConnectedThread().isAlive()) {
+                    tmDevice = BTH.getInstance().connectBT();
+                    cttr = new ConnectThread(tmDevice);
+                    new Thread(cttr).start();
+                }
+            }
+
+        }
+
+        public void cancel(){
+            cttr.cancel();
+            keepRunning = false;
+        }
     }
 
     /** ########################################################################################
@@ -116,12 +152,14 @@ public class BTH {
     private class ConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
+        private boolean keepRunning;
         private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 //        private final UUID MY_UUID = UUID.fromString("0x0003");
 
         public ConnectThread(BluetoothDevice device) {
             BluetoothSocket tmp = null;
             mmDevice = device;
+            keepRunning = true;
 
             try{
                 tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
@@ -132,6 +170,7 @@ public class BTH {
 
         public void run() {
             mBluetoothAdapter.cancelDiscovery();
+            keepRunning = true;
 
             try {
                 mmSocket.connect();
@@ -147,6 +186,41 @@ public class BTH {
             ct = new ConnectedThread(mmSocket);
             new Thread(ct).start();
             //manageConnectedSocket(mmSocket);
+
+            while (keepRunning) {
+                if(ct.isAlive()){
+                    Log.d("The thread thing", "true");
+                } else {
+                    Log.d("The thread thing", "false");
+                }
+                if(!ct.isAlive()){
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        mmSocket.connect();
+                        System.out.println("Succes, socket is connected");
+                        ct = new ConnectedThread(mmSocket);
+                        new Thread(ct).start();
+                    } catch (IOException connectException) {
+                        try {
+                            System.out.println("Failed to connect socket, trying to close socket ...");
+                            mmSocket.close();
+                        } catch(IOException closeException) {
+                            System.out.println("Failed to close connection socket.");
+                        }
+                    }
+                }
+            }
+        }
+
+        public ConnectedThread getConnectedThread(){
+            if(ct != null) {
+                return ct;
+            }
+            return null;
         }
 
         public BluetoothSocket getSocket(){
@@ -158,6 +232,7 @@ public class BTH {
 
         public void cancel() {
             try {
+                keepRunning = false;
                 ct.cancel();
                 System.out.println("Closing bluetooth socket ...");
                 mmSocket.close();
@@ -210,7 +285,7 @@ public class BTH {
         }
 
         public void run() {
-            while(true) try {
+            try {
 
                 String input = dInStream.readLine();
                     if(input.contains("ID:") && input.contains("Data:")) {
@@ -341,12 +416,6 @@ public class BTH {
             }
         }
 
-/*        public void write(byte[] bytes) {
-            try {
-                mmOutStream.write(bytes);
-            } catch (IOException e) {}
-        }
-*/
         public void cancel() {
             try {
                 System.out.println("Closing bluetooth socket ...");

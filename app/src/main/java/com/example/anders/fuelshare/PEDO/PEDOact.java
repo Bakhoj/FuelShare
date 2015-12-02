@@ -74,6 +74,12 @@ public class PEDOact extends Activity implements View.OnClickListener{
     }
 
     @Override
+    protected void onResume() {
+
+        super.onResume();
+    }
+
+    @Override
     protected void onDestroy() {
         bth.close();
         super.onDestroy();
