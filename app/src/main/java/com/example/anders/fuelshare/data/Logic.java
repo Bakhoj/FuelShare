@@ -10,8 +10,9 @@ import android.util.Log;
  */
 public class Logic {
     public static Logic instance = new Logic();
-    private int[] distance;
-    private int[] battery;
+    private Distance[] distance;
+    private Power[] battery;
+    public boolean breakPedal;
     private int velocity;
 
 
@@ -20,15 +21,17 @@ public class Logic {
     }
 
     private void startData(){
-        distance = new int[] {};
-        battery = new int[] {};
-        velocity = 0;
+        distance = new Distance[] {};
+        battery = new Power[] {};
+        velocity = 65024;
+        breakPedal = false;
     }
 
     private void testData(){
-        distance = new int[] {21000, 24000};
-        battery = new int[] {211, 187, 50, 120};
-        /* Change the battery and distance from int[] to own classes, containing int and datestamp*/
+        distance = new Distance[] {new Distance(23000)};
+        battery = new Power[] {new Power(211)};
+        velocity = 65024;
+        breakPedal = false;
     }
 
     /**
@@ -37,11 +40,11 @@ public class Logic {
      * @param dist - lastest distance.
      */
     public void setDistance(int dist) {
-        int[] tempList = new int[distance.length+1];
+        Distance[] tempList = new Distance[distance.length+1];
         for (int i = 0; i < distance.length; i++) {
             tempList[i] = distance[i];
         }
-        tempList[tempList.length - 1] = dist;
+        tempList[tempList.length - 1] = new Distance(dist);
         distance = tempList;
         Log.i("Fuelshare logic", "Distance stored: "+dist);
     }
@@ -51,7 +54,7 @@ public class Logic {
      * @return - the last distance in the distance array.
      */
     public int getDistance() {
-     return distance[distance.length-1];
+     return distance[distance.length-1].dist;
     }
 
     /**
@@ -59,12 +62,11 @@ public class Logic {
      * @param bat - the unconverted battery level
      */
     public void setBattery(int bat) {
-        int[] tempList = new int[battery.length+1];
+        Power[] tempList = new Power[battery.length+1];
         for (int i = 0; i < battery.length; i++) {
             tempList[i] = battery[i];
         }
-        tempList[tempList.length - 1] = bat;
-        battery = tempList;
+        tempList[tempList.length - 1] = new Power(bat);
         Log.i("Fuelshare logic", "battery stored: "+bat);
     }
 
@@ -73,7 +75,7 @@ public class Logic {
      * @return - The last battery level in unconverted int.
      */
     public int getBattery() {
-        return battery[battery.length-1];
+        return battery[battery.length-1].powerLevel;
     }
 
     /**
@@ -81,7 +83,7 @@ public class Logic {
      * @return - The last battery level converted to procent.
      */
     public int getBatteryProcent() {
-        return (battery[battery.length-1]/2)-5;
+        return (battery[battery.length-1].powerLevel/2)-5;
     }
 
     public int getRemainingDistance(){

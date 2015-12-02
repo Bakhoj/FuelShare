@@ -176,13 +176,15 @@ public class BTH {
 //        private final InputStream mmInStream;
         private final DataInputStream dInStream;
 
-        private int distance, velocity;
+        private int distance, velocity, breakRead;
+        private boolean breakPedal;
 
 
         private int outer_state, inner_state;
         private final int STATE_INIT = 0;
         private final int STATE_CHARGE = 884;       // 0x374 (884)
         private final int STATE_ODOMETER = 1042;    // 0x412 (1042)
+        private final int STATE_BREAKPEDAL = 520;      // 0x208 (520)
 
         public ConnectedThread(BluetoothSocket socket){
             mmSocket = socket;
@@ -251,26 +253,11 @@ public class BTH {
                             Logic.instance.setBattery(input);
                             inner_state++;
                             break;
-                        case 2:
-                            inner_state++;
-                            break;
-                        case 3:
-                            inner_state++;
-                            break;
-                        case 4:
-                            inner_state++;
-                            break;
-                        case 5:
-                            inner_state++;
-                            break;
-                        case 6:
-                            inner_state++;
-                            break;
-                        case 7:
-                            inner_state++;
-                            break;
                         default:
-                            Log.d("Fuelshare StateMachine", "INNER DEFAULT ... WTF?");
+                            if(inner_state < 7){
+                                inner_state++;
+                                break;
+                            }
                             outer_state = STATE_INIT;
                             break;
                     }
@@ -305,21 +292,47 @@ public class BTH {
                             Logic.instance.setDistance(distance);
                             inner_state++;
                             break;
-                        case 5:
-                            inner_state++;
-                            break;
-                        case 6:
-                            inner_state++;
-                            break;
-                        case 7:
-                            inner_state++;
-                            break;
                         default:
-                            Log.d("Fuelshare StateMachine", "INNER DEFAULT ... WTF?");
+                            if(inner_state < 7){
+                                inner_state++;
+                                break;
+                            }
                             outer_state = STATE_INIT;
                             break;
                     }
                     break;
+                case STATE_BREAKPEDAL:
+                    switch (inner_state) {
+                        case 0:
+                            inner_state++;
+                            break;
+                        case 1:
+                            inner_state++;
+                            break;
+                        case 2:
+                            //BREAK 1 of 2
+                            breakRead = input<<8;
+                            inner_state++;
+                            break;
+                        case 3:
+                            //BREAK 2 of 2
+                            breakRead += input;
+                            if(breakRead <= 24576){
+                                breakPedal = false;
+                            } else {
+                                breakPedal = true;
+                            }
+                            inner_state++;
+                            break;
+                        default:
+                            if(inner_state < 7){
+                                inner_state++;
+                                break;
+                            }
+                            outer_state = STATE_INIT;
+                            break;
+                    }
+
 
                 default:
                     Log.d("Fuelshare StateMachine", "OUTER DEFAULT");
