@@ -13,4 +13,5 @@ public interface Constants {
     String DEVICE_NAME = "Can-Bus";
     String DEVICE_PASSWORD = "1234";
     int DEVICE_BAUDRATE = 115200;
+    int VELOCITY_NULLER = 65024;
 }

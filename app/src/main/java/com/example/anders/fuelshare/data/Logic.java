@@ -10,10 +10,10 @@ import android.util.Log;
  */
 public class Logic {
     public static Logic instance = new Logic();
+    private boolean charging;
     private int[] distance;
     private int[] battery;
     private int velocity;
-
 
     private Logic() {
         startData(); //testData();
@@ -37,12 +37,12 @@ public class Logic {
      * @param dist - lastest distance.
      */
     public void setDistance(int dist) {
-        int[] tempList = new int[distance.length+1];
-        for (int i = 0; i < distance.length; i++) {
-            tempList[i] = distance[i];
+        int[] tempList = new int[this.distance.length+1];
+        for (int i = 0; i < this.distance.length; i++) {
+            tempList[i] = this.distance[i];
         }
         tempList[tempList.length - 1] = dist;
-        distance = tempList;
+        this.distance = tempList;
         Log.i("Fuelshare logic", "Distance stored: "+dist);
     }
 
@@ -51,7 +51,7 @@ public class Logic {
      * @return - the last distance in the distance array.
      */
     public int getDistance() {
-     return distance[distance.length-1];
+     return this.distance[this.distance.length-1];
     }
 
     /**
@@ -89,10 +89,16 @@ public class Logic {
     }
 
     public void setVelocity(int velocity) {
-        this.velocity = velocity - 65024;
+        this.velocity = velocity - Constants.VELOCITY_NULLER;
     }
 
     public int getVelocity() {
         return velocity;
+    }
+    public boolean isCharging() {
+        return charging;
+    }
+    public void setCharging(boolean charging) {
+        this.charging = charging;
     }
 }
