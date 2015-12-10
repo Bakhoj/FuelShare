@@ -11,7 +11,8 @@ import android.util.Log;
 public class Logic {
     public static Logic instance = new Logic();
     private boolean charging;
-    private int[] distance;
+//    private int[] distance;
+    private Distance[] distance;
     private int[] battery;
     private int velocity;
 
@@ -20,13 +21,13 @@ public class Logic {
     }
 
     private void startData(){
-        distance = new int[] {};
+        distance = new Distance[] {};
         battery = new int[] {};
         velocity = 0;
     }
 
     private void testData(){
-        distance = new int[] {21000, 24000};
+        distance = new Distance[] {new Distance(21000), new Distance(24000)};
         battery = new int[] {211, 187, 50, 120};
         /* Change the battery and distance from int[] to own classes, containing int and datestamp*/
     }
@@ -37,11 +38,11 @@ public class Logic {
      * @param dist - lastest distance.
      */
     public void setDistance(int dist) {
-        int[] tempList = new int[this.distance.length+1];
+        Distance[] tempList = new Distance[this.distance.length+1];
         for (int i = 0; i < this.distance.length; i++) {
             tempList[i] = this.distance[i];
         }
-        tempList[tempList.length - 1] = dist;
+        tempList[tempList.length - 1] = new Distance(dist);
         this.distance = tempList;
         Log.i("Fuelshare logic", "Distance stored: "+dist);
     }
@@ -51,7 +52,7 @@ public class Logic {
      * @return - the last distance in the distance array.
      */
     public int getDistance() {
-     return this.distance[this.distance.length-1];
+     return this.distance[this.distance.length-1].dist;
     }
 
     /**
