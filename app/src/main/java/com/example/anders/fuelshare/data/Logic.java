@@ -14,10 +14,12 @@ public class Logic {
     private Power[] battery;
     public boolean breakPedal;
     private int velocity;
+    public boolean charging;
 
 
     private Logic() {
-        startData(); //testData();
+        //startData();
+        testData();
     }
 
     private void startData(){
@@ -29,9 +31,10 @@ public class Logic {
 
     private void testData(){
         distance = new Distance[] {new Distance(23000)};
-        battery = new Power[] {new Power(211)};
+        battery = new Power[] {new Power(211), new Power(200)};
         velocity = 65024;
         breakPedal = false;
+        charging = false;
     }
 
     /**
@@ -54,6 +57,7 @@ public class Logic {
      * @return - the last distance in the distance array.
      */
     public int getDistance() {
+        if(distance.length == 0) { return 0; }
      return distance[distance.length-1].dist;
     }
 
@@ -83,6 +87,7 @@ public class Logic {
      * @return - The last battery level converted to procent.
      */
     public int getBatteryProcent() {
+        if(battery.length == 0) { return 0;}
         return (battery[battery.length-1].powerLevel/2)-5;
     }
 

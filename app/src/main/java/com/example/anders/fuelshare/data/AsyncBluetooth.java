@@ -1,13 +1,13 @@
 package com.example.anders.fuelshare.data;
 
-import android.bluetooth.BluetoothAdapter;
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.util.Log;
+
+import com.example.anders.fuelshare.PEDO.PEDOact;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -16,97 +16,29 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * BlueTooth Handler
- * Created by anders on 28-10-2015.
- *
- * Handles and keeps the bluetooth connection for the whole application
- * should always call BTH.getInstance() before interacting with BTH
+ * Created by anders on 11-12-2015.
  */
-public class BTH {
-
+public class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
+    PEDOact mActivity;
     BluetoothAdapter mBluetoothAdapter = null;
-    AsyncBluetooth ab = new AsyncBluetooth();
+    private BluetoothSocket mmSocket;
+    private BluetoothDevice mmDevice;
+    private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    private static BTH ourInstance = new BTH();
-    private static Handler mHandler;
+    private int distance, velocity, breakRead;
+    private boolean breakPedal;
 
-    /**
-     * getInstance()
-     * when you want to interact with the BluetoothHandler you get the instance
-     * with this method.
-     * @return ourInstance
-     */
-    public static BTH getInstance(){ return ourInstance;}
+    private int outer_state, inner_state;
+    private final int STATE_INIT = 0;
+    private final int STATE_CHARGE = 884;       // 0x374 (884)
+    private final int STATE_ODOMETER = 1042;    // 0x412 (1042)
+    private final int STATE_BREAKPEDAL = 520;   // 0x208 (520)
+    private final int STATE_CHARGING = 905;          // 0x389 (905)
 
-    public void runAsync() {
-        ab.execute();
+
+    public AsyncBluetooth(Activity activity){
+        mActivity = (PEDOact) activity;
     }
-
-    private BTH(){
-        //ab.execute();
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(mBluetoothAdapter == null){
-            System.out.println("System doesn't support Bluetooth");
-            return;
-        }
-        mHandler = new Handler();
-    }
-
-    /**
-     * connectBT
-     *
-     * @return Set<String> which contains all the paired devices. NULL if none.
-     */
-    public BluetoothDevice connectBT() {
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-
-        if(pairedDevices.size() > 0) {
-            for (BluetoothDevice device : pairedDevices) {
-                //Set<String> mArrayAdapter = null;
-                System.out.println(device.getName() + "\n" + device.getAddress());
-                //mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                return device;
-            }
-            //return pairedDevices;
-        }
-        return null;
-    }
-
-    /**
-     * discoverDevices (not in use)
-     *
-     * Should shearch for all visable bluetooth devices.
-     */
-    public void discoverDevices(){
-
-    }
-
-    public boolean startBt(Activity a){
-        if(!isBtEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            a.startActivityForResult(enableBtIntent, Constants.REQUEST_ENABLE_BT);
-        }
-        return true;
-    }
-    public boolean isBtEnabled(){
-        return mBluetoothAdapter.isEnabled();
-    }
-
-    private class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
-        BluetoothAdapter mBluetoothAdapter = null;
-        private BluetoothSocket mmSocket;
-        private BluetoothDevice mmDevice;
-        private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
-        private int distance, velocity, breakRead;
-        private boolean breakPedal;
-
-        private int outer_state, inner_state;
-        private final int STATE_INIT = 0;
-        private final int STATE_CHARGE = 884;       // 0x374 (884)
-        private final int STATE_ODOMETER = 1042;    // 0x412 (1042)
-        private final int STATE_BREAKPEDAL = 520;      // 0x208 (520)
-
 
         @Override
         protected void onPreExecute() {
@@ -140,9 +72,9 @@ public class BTH {
                 return null;
             }
 
-        try{
-            mmSocket = mmDevice.createRfcommSocketToServiceRecord(MY_UUID);
-        } catch(IOException e){ }
+            try{
+                mmSocket = mmDevice.createRfcommSocketToServiceRecord(MY_UUID);
+            } catch(IOException e){ }
 
             mBluetoothAdapter.cancelDiscovery();
 
@@ -176,7 +108,6 @@ public class BTH {
             int i = 0;
             while(!isCancelled()){
                 try {
-                    Log.d("AsyncTask", "Run readLine");
                     String input = mmInputstream.readLine();
                     Log.d("AsyncTask", "InputRead: " + input.toString());
                     if (input.contains("ID:") && input.contains("Data:")) {
@@ -198,7 +129,7 @@ public class BTH {
                             } catch (NumberFormatException e) {
                             }
                         }
-                        if(i > 50) {
+                        if(i > 150) {
                             publishProgress();
                             i = 0;
                         }
@@ -221,15 +152,18 @@ public class BTH {
 
         @Override
         protected void onProgressUpdate(Void... values) {
+            mActivity.updateUI();
             super.onProgressUpdate(values);
-            Log.d("AsyncTask", "ProgressUpdated!");
         }
 
         private void stateMachine(int input) {
             switch (outer_state) {
                 case STATE_INIT:
                     inner_state = 0;
-                    if (input == STATE_CHARGE || input == STATE_ODOMETER) {
+                    if (input == STATE_CHARGE ||
+                            input == STATE_ODOMETER ||
+                            input == STATE_CHARGING ||
+                            input == STATE_BREAKPEDAL) {
                         outer_state = input;
                     }
                     break;
@@ -321,6 +255,43 @@ public class BTH {
                             outer_state = STATE_INIT;
                             break;
                     }
+                    break;
+                case STATE_CHARGING:
+                    switch (inner_state) {
+                        case 0:
+                            inner_state++;
+                            break;
+                        case 1:
+                            inner_state++;
+                            break;
+                        case 2:
+                            inner_state++;
+                            break;
+                        case 3:
+                            inner_state++;
+                            break;
+                        case 4:
+                            inner_state++;
+                            break;
+                        case 5:
+                            if(input > 7) {
+                                Logic.instance.charging = true;
+                                Log.d("AsyncTask", "Charging true");
+                            } else {
+                                Logic.instance.charging = false;
+                                Log.d("AsyncTask", "Charging false");
+                            }
+                            inner_state++;
+                            break;
+                        default:
+                            if (inner_state < 7) {
+                                inner_state++;
+                                break;
+                            }
+                            outer_state = STATE_INIT;
+                            break;
+                    }
+                    break;
 
 
                 default:
@@ -330,5 +301,6 @@ public class BTH {
             }
         }
     }
-}
+
+
 

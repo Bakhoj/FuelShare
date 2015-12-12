@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BluetoothAdmin"/>
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+    <!--<uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/> -->
 
     //Maps permissions
     <uses-permission android:name="android.permission.INTERNET" />

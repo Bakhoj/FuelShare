@@ -70,5 +70,15 @@ tools:context="com.example.anders.fuelshare.PEDO.PEDOact">
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:src="@drawable/battery_4" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Charging"
+            android:id="@+id/charging_checkBox"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/pedo_test_distance"
+            android:layout_alignStart="@+id/pedo_test_distance"
+            android:clickable="false" />
     </RelativeLayout>
 </RelativeLayout>

@@ -1,19 +1,33 @@
 package com.example.anders.fuelshare.PEDO;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.anders.fuelshare.R;
 import com.example.anders.fuelshare.common.LSH;
+import com.example.anders.fuelshare.data.AsyncBluetooth;
 import com.example.anders.fuelshare.data.BTH;
+import com.example.anders.fuelshare.data.Constants;
 import com.example.anders.fuelshare.data.Logic;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * PEDO meter activity
@@ -24,11 +38,14 @@ import com.example.anders.fuelshare.data.Logic;
 public class PEDOact extends Activity implements View.OnClickListener{
 
     Handler mHandler;
+    int charging_buffer;
     TextView distance, battery, usage;
     ImageView batImage;
     Button btn, btn2;
     BTH bth;
     LSH lsh;
+    CheckBox checkBox;
+    AsyncBluetooth ab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +53,14 @@ public class PEDOact extends Activity implements View.OnClickListener{
         setContentView(R.layout.act_pedo);
 
         lsh = LSH.getInstance();
-
+        charging_buffer = 0;
         distance = (TextView) findViewById(R.id.pedo_test_distance);
         battery = (TextView) findViewById(R.id.pedo_test_battery_level);
         usage = (TextView) findViewById(R.id.pedo_test_usage);
         btn = (Button) findViewById(R.id.pedo_test_btn);
         btn2 = (Button) findViewById(R.id.pedo_test_btn2);
         batImage = (ImageView) findViewById(R.id.pedo_test_bat_image);
+        checkBox = (CheckBox) findViewById(R.id.charging_checkBox);
 
         distance.setText("Distance traveled: \t0");
         battery.setText("Battery level: \t\t\t\t0");
@@ -56,7 +74,7 @@ public class PEDOact extends Activity implements View.OnClickListener{
      * updates all the numbers on the display.
      * should be called everytime new data has been read.
      */
-    private void updateUI(){
+    public void updateUI(){
         double bat = Logic.instance.getBatteryProcent();
         distance.setText(String.format("Distance traveled: \t%d", Logic.instance.getDistance()));
         battery.setText(String.format("Battery level: \t\t\t\t%s%%", bat));
@@ -71,6 +89,18 @@ public class PEDOact extends Activity implements View.OnClickListener{
         } else {
             batImage.setImageResource(R.drawable.battery_1);
         }
+
+        if(Logic.instance.charging) {
+            checkBox.setChecked(true);
+            charging_buffer++;
+            if(charging_buffer > 15){
+                Logic.instance.charging = false;
+                charging_buffer = 0;
+            }
+        } else {
+            checkBox.setChecked(false);
+        }
+        Log.d("PEDOact", "UI has been updated");
     }
 
     @Override
@@ -81,7 +111,7 @@ public class PEDOact extends Activity implements View.OnClickListener{
 
     @Override
     protected void onDestroy() {
-        bth.close();
+        //bth.close();
         super.onDestroy();
     }
 
@@ -90,6 +120,10 @@ public class PEDOact extends Activity implements View.OnClickListener{
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_pedoact, menu);
         return true;
+    }
+
+    public void onProgressUpdate(Void... values) {
+        updateUI();
     }
 
     @Override
@@ -114,10 +148,14 @@ public class PEDOact extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.pedo_test_btn:
-                bth = BTH.getInstance();
+                //bth = BTH.getInstance();
+                //bth.runAsync();
+                ab = new AsyncBluetooth(this);
+                ab.execute();
+                /* bth = BTH.getInstance();
                 //bth.connectBT();
                 bth.testMethod(bth.connectBT());
-                mHandler = bth.getHandler();
+                mHandler = bth.getHandler(); */
                 break;
             case R.id.pedo_test_btn2:
                 updateUI();
