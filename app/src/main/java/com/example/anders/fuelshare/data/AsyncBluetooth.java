@@ -17,6 +17,8 @@ import java.util.UUID;
 
 /**
  * Created by anders on 11-12-2015.
+ *
+ * Bluetooth Handling done with AsyncTask
  */
 public class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
     PEDOact mActivity;
@@ -24,11 +26,9 @@ public class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
     private BluetoothSocket mmSocket;
     private BluetoothDevice mmDevice;
     private final String DEVICE_NAME = "Can-Bus";
-    private final int REQUEST_ENABLE_BT = 27; //should just be > 0
     private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private int distance, velocity, breakRead;
-    private boolean breakPedal;
 
     private int outer_state, inner_state;
     private final int STATE_INIT = 0;

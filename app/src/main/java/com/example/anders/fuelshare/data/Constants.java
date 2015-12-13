@@ -5,7 +5,7 @@ import java.util.UUID;
 /**
  * Created by anders on 10-Nov-15.
  *
- * think I'll delete  this one again
+ * think I'll delete  this one again. yes, yes i should
  */
 public interface Constants {
 
