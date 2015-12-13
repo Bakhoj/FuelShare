@@ -2,6 +2,8 @@ package com.example.anders.fuelshare.data;
 
 import android.util.Log;
 
+import java.util.Date;
+
 /**
  * Created by anders on 25-11-2015.
  *
@@ -12,10 +14,9 @@ public class Logic {
     public static Logic instance = new Logic();
     private Distance[] distance;
     private Power[] battery;
-    public boolean breakPedal;
-    private int velocity;
     public boolean charging;
-
+    private int velocity, brakeCounter;
+    private boolean turnedOn, brakePedal, continuousBraking;
 
     private Logic() {
         //startData();
@@ -26,15 +27,16 @@ public class Logic {
         distance = new Distance[] {};
         battery = new Power[] {};
         velocity = 65024;
-        breakPedal = false;
+        brakePedal = false;
     }
 
     private void testData(){
         distance = new Distance[] {new Distance(23000)};
-        battery = new Power[] {new Power(211), new Power(200)};
-        velocity = 65024;
-        breakPedal = false;
+        battery = new Power[] {new Power(211), new Power(120)};
+        velocity = 0;
+        brakePedal = false;
         charging = false;
+        turnedOn = false;
     }
 
     /**
@@ -71,6 +73,7 @@ public class Logic {
             tempList[i] = battery[i];
         }
         tempList[tempList.length - 1] = new Power(bat);
+        battery = tempList;
         Log.i("Fuelshare logic", "battery stored: "+bat);
     }
 
@@ -97,9 +100,43 @@ public class Logic {
 
     public void setVelocity(int velocity) {
         this.velocity = velocity - 65024;
+        if (this.velocity == 511) {
+            this.velocity = 0;
+            turnedOn = false;
+        } else {
+            turnedOn = true;
+        }
     }
 
     public int getVelocity() {
         return velocity;
     }
+
+    public boolean isTurnedOn() {
+        return turnedOn;
+    }
+
+    public boolean isBrakePedal() {
+        return brakePedal;
+    }
+
+    public void setBrakePedal(boolean brakePedal) {
+        if(continuousBraking && brakePedal) {
+            this.brakePedal = brakePedal;
+            return;
+        }
+        if (brakePedal && !continuousBraking) {
+            this.brakePedal = brakePedal;
+            this.continuousBraking = true;
+            brakeCounter++;
+            return;
+        }
+        this.brakePedal = brakePedal;
+        this.continuousBraking = false;
+    }
+
+    public int getBrakeCounter() {
+        return brakeCounter;
+    }
 }
+

@@ -80,5 +80,24 @@ tools:context="com.example.anders.fuelshare.PEDO.PEDOact">
             android:layout_alignLeft="@+id/pedo_test_distance"
             android:layout_alignStart="@+id/pedo_test_distance"
             android:clickable="false" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Braking"
+            android:id="@+id/break_checkBox"
+            android:clickable="false"
+            android:layout_below="@+id/charging_checkBox"
+            android:layout_alignLeft="@+id/charging_checkBox"
+            android:layout_alignStart="@+id/charging_checkBox" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="On"
+            android:id="@+id/turnedon_checkBox"
+            android:layout_below="@+id/break_checkBox"
+            android:layout_alignLeft="@+id/break_checkBox"
+            android:layout_alignStart="@+id/break_checkBox" />
     </RelativeLayout>
 </RelativeLayout>

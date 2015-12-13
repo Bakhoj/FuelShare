@@ -23,6 +23,8 @@ public class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
     BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothSocket mmSocket;
     private BluetoothDevice mmDevice;
+    private final String DEVICE_NAME = "Can-Bus";
+    private final int REQUEST_ENABLE_BT = 27; //should just be > 0
     private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private int distance, velocity, breakRead;
@@ -57,7 +59,7 @@ public class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
             if(pairedDevices.size() > 0) {
                 for (BluetoothDevice device : pairedDevices) {
                     System.out.println(device.getName() + "\n" + device.getAddress());
-                    if (device.getName().equals(Constants.DEVICE_NAME)) {
+                    if (device.getName().equals(DEVICE_NAME)) {
                         mmDevice = device;
                         break;
                     }
@@ -109,7 +111,7 @@ public class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
             while(!isCancelled()){
                 try {
                     String input = mmInputstream.readLine();
-                    Log.d("AsyncTask", "InputRead: " + input.toString());
+//                    Log.d("AsyncTask", "InputRead: " + input.toString());
                     if (input.contains("ID:") && input.contains("Data:")) {
                         outer_state = STATE_INIT;
                         String[] first = input.split("  Data: ");
@@ -139,6 +141,7 @@ public class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    cancel(true);
                 }
             }
 
@@ -241,9 +244,11 @@ public class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
                             //BREAK 2 of 2
                             breakRead += input;
                             if (breakRead <= 24576) {
-                                breakPedal = false;
+                                Logic.instance.setBrakePedal(false);
+                                Log.d("AsyncTask", "break false");
                             } else {
-                                breakPedal = true;
+                                Logic.instance.setBrakePedal(true);
+                                Log.d("AsyncTask", "break true");
                             }
                             inner_state++;
                             break;
@@ -274,6 +279,7 @@ public class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
                             inner_state++;
                             break;
                         case 5:
+                            Log.d("AsyncTask", "charging value: " + input);
                             if(input > 7) {
                                 Logic.instance.charging = true;
                                 Log.d("AsyncTask", "Charging true");
