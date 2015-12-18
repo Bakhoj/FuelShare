@@ -18,10 +18,8 @@ import com.example.anders.fuelshare.map.MapAct;
 public class LogInAct extends Activity implements View.OnClickListener{
 
     BTH bth = BTH.getInstance();
-    Button logBtn, createBtn;
+    Button logBtn;
     Intent i;
-    EditText ETemail, ETpass;
-    String sEmail, sPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,34 +31,19 @@ public class LogInAct extends Activity implements View.OnClickListener{
         //login button listener
         logBtn = (Button) findViewById(R.id.login_ok_but);
         logBtn.setOnClickListener(this);
-
-        //create button listener
-        createBtn = (Button) findViewById(R.id.login_create_but);
-        createBtn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
-            case R.id.login_ok_but:
-                AsyncLoginDatabase aLD = new AsyncLoginDatabase(this);
-                aLD.execute();
-                break;
-            case R.id.login_create_but:
-                i = new Intent(this, PEDOact.class);
-                this.startActivity(i);
-                finish();
-                System.out.println("Create");
-                break;
-        }
+        AsyncLoginDatabase aLD = new AsyncLoginDatabase(this);
+        aLD.execute();
     }
 
     public void login(){
         /*
-            check if the user and password fit with the Database
-            right now it just puts the email and password into strings
+        starts PEDO if AsyncLoginDatabase allows it
          */
-        i = new Intent(this, MapAct.class);
+        i = new Intent(this, PEDOact.class);
         this.startActivity(i);
         finish();
     }
