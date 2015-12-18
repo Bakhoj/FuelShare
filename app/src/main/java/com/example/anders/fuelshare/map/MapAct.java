@@ -75,7 +75,7 @@ public class MapAct extends FragmentActivity implements OnMapReadyCallback, View
         map.getUiSettings().setMyLocationButtonEnabled(false);
         LocationManager locManager = (LocationManager)getSystemService(LOCATION_SERVICE);
 
-        Location myLocation = locManager.getLastKnownLocation(locManager.NETWORK_PROVIDER);
+        Location myLocation = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         myLat = myLocation.getLatitude();
         myLng = myLocation.getLongitude();

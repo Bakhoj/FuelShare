@@ -2,9 +2,7 @@ package com.example.anders.fuelshare.data;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.util.JsonReader;
 
-import com.example.anders.fuelshare.R;
 import com.example.anders.fuelshare.map.MapAct;
 
 import org.json.JSONArray;
@@ -13,10 +11,8 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 
 /**
  * Created by Lars on 18-12-2015.
