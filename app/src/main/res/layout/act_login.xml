@@ -48,15 +48,4 @@
         android:layout_alignRight="@+id/login_password_et"
         android:textSize="20dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create"
-        android:id="@+id/login_create_but"
-        style="@android:style/ButtonBar"
-        android:layout_below="@+id/login_ok_but"
-        android:layout_alignRight="@+id/login_password_et"
-        android:layout_alignLeft="@+id/login_password_et"
-        android:layout_marginTop="5dp"
-        android:textSize="20dp" />
 </RelativeLayout>
