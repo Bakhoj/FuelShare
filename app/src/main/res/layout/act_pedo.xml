@@ -62,6 +62,16 @@ tools:context="com.example.anders.fuelshare.PEDO.PEDOact">
             android:layout_below="@+id/pedo_test_btn"
             android:layout_centerHorizontal="true" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|top"
+            android:text="@string/maps_btn"
+            android:id="@+id/maps_btn"
+            android:padding="10dp"
+            android:layout_marginTop="20dp"
+            android:paddingRight="10dp"/>
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
