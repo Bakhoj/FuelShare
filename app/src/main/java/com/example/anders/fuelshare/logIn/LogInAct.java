@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 import com.example.anders.fuelshare.PEDO.PEDOact;
 import com.example.anders.fuelshare.R;
+import com.example.anders.fuelshare.data.AsyncLoginDatabase;
 import com.example.anders.fuelshare.data.BTH;
 import com.example.anders.fuelshare.map.MapAct;
 
@@ -47,14 +48,8 @@ public class LogInAct extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.login_ok_but:
-                //if(login()) {
-                    i = new Intent(this, MapAct.class);
-                    this.startActivity(i);
-                    finish();
-                //}
-                //else{
-                //    loginFail();
-                //}
+                AsyncLoginDatabase aLD = new AsyncLoginDatabase(this);
+                aLD.execute();
                 break;
             case R.id.login_create_but:
                 i = new Intent(this, PEDOact.class);
@@ -65,17 +60,17 @@ public class LogInAct extends Activity implements View.OnClickListener{
         }
     }
 
-    private boolean login(){
+    public void login(){
         /*
             check if the user and password fit with the Database
             right now it just puts the email and password into strings
          */
-        sEmail = ETemail.getText().toString();
-        sPass = ETpass.getText().toString();
-        return true;
+        i = new Intent(this, MapAct.class);
+        this.startActivity(i);
+        finish();
     }
 
-    private void loginFail(){
+    public void loginFail(){
         /*
             Add popup window or something telling the user
             that the user and password combination wasn't found

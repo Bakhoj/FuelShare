@@ -1,12 +1,21 @@
 <resources>
     <string name="app_name">FuelShare</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_pedoact">PEDOact</string>
     <string name="title_activity_login">LoginAct</string>
     <string name="title_activity_log_in">LogInAct</string>
     <string name="title_activity_map">MapAct</string>
+
+    <!-- maps strings-->
+    <!-- search bar-->
+    <string name="action_search">Place Search</string>
+    <string name="search_hint">Search address or place</string>
+    <string name="menu_search">Search</string>
+
+    <string name="address_search">Searching for Address</string>
+    <string name="addressSearchFailed">Address search failed</string>
+    <string name="noResultsFound">No results found</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
