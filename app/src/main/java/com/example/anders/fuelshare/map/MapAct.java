@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.example.anders.fuelshare.R;
 
+import com.example.anders.fuelshare.data.AsyncLocationsDatabase;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -54,6 +55,8 @@ public class MapAct extends FragmentActivity implements OnMapReadyCallback {
         myLng = myLocation.getLongitude();
         LatLng myLocationLatLng = new LatLng(myLat,myLng);
         //Add chargerMarkers
+        AsyncLocationsDatabase aLocD = new AsyncLocationsDatabase(this);
+        aLocD.execute();
 
 
         //zoom before moving to location
@@ -61,11 +64,11 @@ public class MapAct extends FragmentActivity implements OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocationLatLng));
     }
 
-    private void AddChargerMarkers(GoogleMap map, double latitude, double longtitude, String chargerAdress, String snippet){
+    public void addChargerMarkers(double latitude, double longtitude, String chargerAdress){
+        GoogleMap map = this.mMap;
         map.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude,longtitude))
                 .title(chargerAdress)
-                .snippet(snippet)
         );
     }
 }
