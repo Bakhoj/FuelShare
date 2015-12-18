@@ -1,6 +1,7 @@
 package com.example.anders.fuelshare.PEDO;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.example.anders.fuelshare.R;
 import com.example.anders.fuelshare.data.AsyncBluetooth;
 import com.example.anders.fuelshare.data.Logic;
+import com.example.anders.fuelshare.map.MapAct;
 
 /**
  * PEDO meter activity
@@ -24,11 +26,11 @@ import com.example.anders.fuelshare.data.Logic;
  */
 public class PEDOact extends Activity implements View.OnClickListener{
 
-    Handler mHandler;
+    //Handler mHandler;
     int charging_buffer;
     TextView distance, battery, usage;
     ImageView batImage;
-    Button btn, btn2;
+    Button btn, btn2, mapsBtn;
     CheckBox charging_cb, breaking_cb, turnedon_cb;
     AsyncBluetooth ab;
 
@@ -43,6 +45,7 @@ public class PEDOact extends Activity implements View.OnClickListener{
         usage = (TextView) findViewById(R.id.pedo_test_usage);
         btn = (Button) findViewById(R.id.pedo_test_btn);
         btn2 = (Button) findViewById(R.id.pedo_test_btn2);
+        mapsBtn = (Button) findViewById(R.id.maps_btn);
         batImage = (ImageView) findViewById(R.id.pedo_test_bat_image);
         charging_cb = (CheckBox) findViewById(R.id.charging_checkBox);
         breaking_cb = (CheckBox) findViewById(R.id.break_checkBox);
@@ -54,6 +57,10 @@ public class PEDOact extends Activity implements View.OnClickListener{
 
         btn.setOnClickListener(this);
         btn2.setOnClickListener(this);
+        mapsBtn.setOnClickListener(this);
+        if(savedInstanceState == null) {
+            ab = new AsyncBluetooth(this);
+        }
     }
 
     /**
@@ -119,10 +126,6 @@ public class PEDOact extends Activity implements View.OnClickListener{
         return true;
     }
 
-    public void onProgressUpdate(Void... values) {
-        updateUI();
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -147,7 +150,6 @@ public class PEDOact extends Activity implements View.OnClickListener{
             case R.id.pedo_test_btn:
                 //bth = BTH.getInstance();
                 //bth.runAsync();
-                ab = new AsyncBluetooth(this);
                 ab.execute();
                 /* bth = BTH.getInstance();
                 //bth.connectBT();
@@ -156,6 +158,12 @@ public class PEDOact extends Activity implements View.OnClickListener{
                 break;
             case R.id.pedo_test_btn2:
                 updateUI();
+                break;
+            case R.id.maps_btn:
+                Intent i = new Intent(this, MapAct.class);
+                this.startActivity(i);
+                ab.cancel(true);
+                finish();
                 break;
         }
     }

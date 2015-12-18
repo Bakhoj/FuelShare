@@ -27,7 +27,7 @@
     <string name="distance_test">Distance traveled: 	%f</string>
     <string name="battery_test">Battery level: 				%f</string>
     <string name="velocity_test">Velocity: 				%f</string>
-    <string name="maps_btn" />
-    <string name="pedo_btn" />
+    <string name="maps_btn">Maps</string>
+    <string name="pedo_btn">PEDO</string>
 
 </resources>
