@@ -3,5 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" android:id="@+id/map"
     tools:context=".map.MapAct"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
-    />
+    android:name="com.google.android.gms.maps.SupportMapFragment">
+        <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+        android:text="PEDO Button"
+        android:id="@+id/pedo_btn"
+        android:padding="10dp"
+        android:layout_marginTop="20dp"
+        android:paddingRight="10dp"/>
+    </fragment>

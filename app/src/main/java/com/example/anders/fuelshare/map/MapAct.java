@@ -1,10 +1,14 @@
 package com.example.anders.fuelshare.map;
 
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
+import com.example.anders.fuelshare.PEDO.PEDOact;
 import com.example.anders.fuelshare.R;
 
 import com.example.anders.fuelshare.data.AsyncLocationsDatabase;
@@ -15,8 +19,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapAct extends FragmentActivity implements OnMapReadyCallback {
+public class MapAct extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
 
+    Button pedoBtn;
     private GoogleMap mMap;
 
     @Override
@@ -27,6 +32,11 @@ public class MapAct extends FragmentActivity implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        //PEDO button listener
+        pedoBtn = (Button) findViewById(R.id.pedo_btn);
+        pedoBtn.setOnClickListener(this);
+
+
     }
 
 
@@ -40,35 +50,45 @@ public class MapAct extends FragmentActivity implements OnMapReadyCallback {
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        double myLat;
-        double myLng;
         mMap = googleMap;
 
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
-        LocationManager locManager = (LocationManager)getSystemService(LOCATION_SERVICE);
-
-        // Add myLocation
-        Location myLocation = locManager.getLastKnownLocation(locManager.NETWORK_PROVIDER);
-        if (myLocation == null ) System.out.println("here");
-        myLat = myLocation.getLatitude();
-        myLng = myLocation.getLongitude();
-        LatLng myLocationLatLng = new LatLng(myLat,myLng);
         //Add chargerMarkers
         AsyncLocationsDatabase aLocD = new AsyncLocationsDatabase(this);
         aLocD.execute();
-
-
-        //zoom before moving to location
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(18)); //max zoom is 21
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocationLatLng));
+        //zoom to position
+        moveToLoc();
     }
 
     public void addChargerMarkers(double latitude, double longtitude, String chargerAdress){
         GoogleMap map = this.mMap;
         map.addMarker(new MarkerOptions()
-                .position(new LatLng(latitude,longtitude))
-                .title(chargerAdress)
+                        .position(new LatLng(latitude, longtitude))
+                        .title(chargerAdress)
         );
+    }
+    private void moveToLoc(){
+        double myLat;
+        double myLng;
+        GoogleMap map = this.mMap;
+
+        map.setMyLocationEnabled(true);
+        map.getUiSettings().setMyLocationButtonEnabled(false);
+        LocationManager locManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+
+        Location myLocation = locManager.getLastKnownLocation(locManager.NETWORK_PROVIDER);
+
+        myLat = myLocation.getLatitude();
+        myLng = myLocation.getLongitude();
+        LatLng myLocationLatLng = new LatLng(myLat,myLng);
+
+        map.moveCamera(CameraUpdateFactory.zoomTo(15)); //max zoom is 21
+        map.moveCamera(CameraUpdateFactory.newLatLng(myLocationLatLng));
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent i = new Intent(this, PEDOact.class);
+        this.startActivity(i);
+        finish();
     }
 }

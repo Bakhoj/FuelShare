@@ -39,11 +39,6 @@ public class LogInAct extends Activity implements View.OnClickListener{
         createBtn.setOnClickListener(this);
     }
 
-    private boolean checkLogIn(){
-
-        return true;
-    }
-
     @Override
     public void onClick(View v) {
         switch(v.getId()){
