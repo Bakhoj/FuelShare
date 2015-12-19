@@ -38,14 +38,19 @@ public class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
     private final int STATE_CHARGING = 905;          // 0x389 (905)
 
 
-    public AsyncBluetooth(Activity activity){
-        mActivity = (PEDOact) activity;
+    public AsyncBluetooth(){
     }
+
+        public void setmActivity(Activity activity) {
+            mActivity = (PEDOact) activity;
+        }
 
         @Override
         protected void onPreExecute() {
+            Logic.instance.asyncRunning = true;
             super.onPreExecute();
         }
+
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -150,6 +155,8 @@ public class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            Logic.instance.asyncRunning = false;
+            mActivity.updateUI();
             super.onPostExecute(aVoid);
         }
 
@@ -159,7 +166,14 @@ public class AsyncBluetooth extends AsyncTask<Void, Void, Void> {
             super.onProgressUpdate(values);
         }
 
-        private void stateMachine(int input) {
+    @Override
+    protected void onCancelled() {
+        Logic.instance.asyncRunning = false;
+        mActivity.updateUI();
+        super.onCancelled();
+    }
+
+    private void stateMachine(int input) {
             switch (outer_state) {
                 case STATE_INIT:
                     inner_state = 0;

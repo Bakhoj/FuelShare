@@ -17,26 +17,33 @@ public class Logic {
     public boolean charging;
     private int velocity, brakeCounter;
     private boolean turnedOn, brakePedal, continuousBraking;
+    public boolean asyncRunning;
+    public AsyncBluetooth asyncBluetooth;
 
     private Logic() {
-        //startData();
-        testData();
+        startData();
+        //testData();
     }
 
-    private void startData(){
+    private void startData() {
         distance = new Distance[] {};
         battery = new Power[] {};
-        velocity = 65024;
+        velocity = 0;
         brakePedal = false;
+        charging = false;
+        turnedOn = false;
+        asyncRunning = false;
+//        asyncBluetooth = new AsyncBluetooth();
     }
 
-    private void testData(){
+    private void testData() {
         distance = new Distance[] {new Distance(23000)};
         battery = new Power[] {new Power(211), new Power(120)};
         velocity = 0;
         brakePedal = false;
         charging = false;
         turnedOn = false;
+        asyncRunning = false;
     }
 
     /**
@@ -45,6 +52,11 @@ public class Logic {
      * @param dist - lastest distance.
      */
     public void setDistance(int dist) {
+        if(dist == distance[distance.length-1].dist){
+            Log.i("Fuelshare logic", "Distance was same: "+dist);
+            return;
+        }
+
         Distance[] tempList = new Distance[distance.length+1];
         for (int i = 0; i < distance.length; i++) {
             tempList[i] = distance[i];
@@ -59,7 +71,7 @@ public class Logic {
      * @return - the last distance in the distance array.
      */
     public int getDistance() {
-        if(distance.length == 0) { return 0; }
+        if(distance.length < 1) { return 0; }
      return distance[distance.length-1].dist;
     }
 
@@ -68,13 +80,18 @@ public class Logic {
      * @param bat - the unconverted battery level
      */
     public void setBattery(int bat) {
+        if(bat == battery[battery.length-1].powerLevel) {
+            Log.i("Fuelshare logic", "Battery level was same: "+bat);
+            return;
+        }
+
         Power[] tempList = new Power[battery.length+1];
         for (int i = 0; i < battery.length; i++) {
             tempList[i] = battery[i];
         }
         tempList[tempList.length - 1] = new Power(bat);
         battery = tempList;
-        Log.i("Fuelshare logic", "battery stored: "+bat);
+        Log.i("Fuelshare logic", "Battery level stored: "+bat);
     }
 
     /**
@@ -89,8 +106,8 @@ public class Logic {
      * get battery level procent
      * @return - The last battery level converted to procent.
      */
-    public int getBatteryProcent() {
-        if(battery.length == 0) { return 0;}
+    public double getBatteryProcent() {
+        if(battery.length < 1) { return 0;}
         return (battery[battery.length-1].powerLevel/2)-5;
     }
 

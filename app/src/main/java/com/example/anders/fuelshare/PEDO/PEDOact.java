@@ -3,7 +3,6 @@ package com.example.anders.fuelshare.PEDO;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,14 +24,12 @@ import com.example.anders.fuelshare.map.MapAct;
  * basically PEDO UI logic
  */
 public class PEDOact extends Activity implements View.OnClickListener{
-
-    //Handler mHandler;
     int charging_buffer;
     TextView distance, battery, usage;
     ImageView batImage;
-    Button btn, btn2, mapsBtn;
+    Button btn, mapsBtn;
     CheckBox charging_cb, breaking_cb, turnedon_cb;
-    AsyncBluetooth ab;
+//    AsyncBluetooth ab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,23 +41,22 @@ public class PEDOact extends Activity implements View.OnClickListener{
         battery = (TextView) findViewById(R.id.pedo_test_battery_level);
         usage = (TextView) findViewById(R.id.pedo_test_usage);
         btn = (Button) findViewById(R.id.pedo_test_btn);
-        btn2 = (Button) findViewById(R.id.pedo_test_btn2);
         mapsBtn = (Button) findViewById(R.id.maps_btn);
         batImage = (ImageView) findViewById(R.id.pedo_test_bat_image);
         charging_cb = (CheckBox) findViewById(R.id.charging_checkBox);
         breaking_cb = (CheckBox) findViewById(R.id.break_checkBox);
         turnedon_cb = (CheckBox) findViewById(R.id.turnedon_checkBox);
 
-        distance.setText("Distance traveled: \t0");
-        battery.setText("Battery level: \t\t\t\t0");
-        usage.setText("use/distance: \t\t\t\t0");
+        updateUI();
 
         btn.setOnClickListener(this);
-        btn2.setOnClickListener(this);
         mapsBtn.setOnClickListener(this);
-        if(savedInstanceState == null) {
-            ab = new AsyncBluetooth(this);
+        if(!Logic.instance.asyncRunning) {
+            //Logic.instance.asyncBluetooth = new AsyncBluetooth();
+        } else {
+            Logic.instance.asyncBluetooth.setmActivity(this);
         }
+
     }
 
     /**
@@ -104,18 +100,16 @@ public class PEDOact extends Activity implements View.OnClickListener{
         } else {
             breaking_cb.setChecked(false);
         }
+
+        if(!Logic.instance.asyncRunning) {
+            btn.setEnabled(true);
+        }
         Log.d("PEDOact", "UI has been updated");
     }
 
     @Override
-    protected void onResume() {
-
-        super.onResume();
-    }
-
-    @Override
     protected void onDestroy() {
-        ab.cancel(true);
+        //ab.cancel(true);
         super.onDestroy();
     }
 
@@ -150,19 +144,24 @@ public class PEDOact extends Activity implements View.OnClickListener{
             case R.id.pedo_test_btn:
                 //bth = BTH.getInstance();
                 //bth.runAsync();
-                ab.execute();
+                if(!Logic.instance.asyncRunning) {
+                    Logic.instance.asyncBluetooth = new AsyncBluetooth();
+                    Logic.instance.asyncBluetooth.setmActivity(this);
+                    Logic.instance.asyncBluetooth.execute();
+                    btn.setEnabled(false);
+                } else {
+                    btn.setEnabled(true);
+                }
                 /* bth = BTH.getInstance();
                 //bth.connectBT();
                 bth.testMethod(bth.connectBT());
                 mHandler = bth.getHandler(); */
-                break;
-            case R.id.pedo_test_btn2:
-                updateUI();
+
                 break;
             case R.id.maps_btn:
                 Intent i = new Intent(this, MapAct.class);
                 this.startActivity(i);
-                ab.cancel(true);
+                Logic.instance.asyncBluetooth.cancel(true);
                 finish();
                 break;
         }

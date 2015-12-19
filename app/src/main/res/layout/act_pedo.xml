@@ -57,14 +57,6 @@ tools:context="com.example.anders.fuelshare.PEDO.PEDOact">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Update"
-            android:id="@+id/pedo_test_btn2"
-            android:layout_below="@+id/pedo_test_btn"
-            android:layout_centerHorizontal="true" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_gravity="right|top"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
