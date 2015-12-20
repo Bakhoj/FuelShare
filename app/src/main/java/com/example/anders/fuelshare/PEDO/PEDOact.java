@@ -103,6 +103,8 @@ public class PEDOact extends Activity implements View.OnClickListener{
 
         if(!Logic.instance.asyncRunning) {
             btn.setEnabled(true);
+        } else {
+            btn.setEnabled(false);
         }
         Log.d("PEDOact", "UI has been updated");
     }

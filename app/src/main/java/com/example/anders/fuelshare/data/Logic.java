@@ -52,11 +52,12 @@ public class Logic {
      * @param dist - lastest distance.
      */
     public void setDistance(int dist) {
-        if(dist == distance[distance.length-1].dist){
-            Log.i("Fuelshare logic", "Distance was same: "+dist);
-            return;
+        if(distance.length > 0) {
+            if (dist == distance[distance.length - 1].dist) {
+                Log.i("Fuelshare logic", "Distance was same: " + dist);
+                return;
+            }
         }
-
         Distance[] tempList = new Distance[distance.length+1];
         for (int i = 0; i < distance.length; i++) {
             tempList[i] = distance[i];
@@ -80,11 +81,12 @@ public class Logic {
      * @param bat - the unconverted battery level
      */
     public void setBattery(int bat) {
-        if(bat == battery[battery.length-1].powerLevel) {
-            Log.i("Fuelshare logic", "Battery level was same: "+bat);
-            return;
+        if(battery.length > 0) {
+            if (bat == battery[battery.length - 1].powerLevel) {
+                Log.i("Fuelshare logic", "Battery level was same: " + bat);
+                return;
+            }
         }
-
         Power[] tempList = new Power[battery.length+1];
         for (int i = 0; i < battery.length; i++) {
             tempList[i] = battery[i];
@@ -108,7 +110,7 @@ public class Logic {
      */
     public double getBatteryProcent() {
         if(battery.length < 1) { return 0;}
-        return (battery[battery.length-1].powerLevel/2)-5;
+        return (battery[battery.length-1].powerLevel/2.0)-5.0;
     }
 
     public int getRemainingDistance(){
