@@ -25,7 +25,7 @@ import com.example.anders.fuelshare.map.MapAct;
  */
 public class PEDOact extends Activity implements View.OnClickListener{
     int charging_buffer;
-    TextView distance, battery, usage;
+    TextView distance, battery, usage, velocity;
     ImageView batImage;
     Button btn, mapsBtn;
     CheckBox charging_cb, breaking_cb, turnedon_cb;
@@ -40,6 +40,8 @@ public class PEDOact extends Activity implements View.OnClickListener{
         distance = (TextView) findViewById(R.id.pedo_test_distance);
         battery = (TextView) findViewById(R.id.pedo_test_battery_level);
         usage = (TextView) findViewById(R.id.pedo_test_usage);
+        velocity = (TextView) findViewById(R.id.pedo_test_velocity);
+
         btn = (Button) findViewById(R.id.pedo_test_btn);
         mapsBtn = (Button) findViewById(R.id.maps_btn);
         batImage = (ImageView) findViewById(R.id.pedo_test_bat_image);
@@ -67,7 +69,8 @@ public class PEDOact extends Activity implements View.OnClickListener{
         double bat = Logic.instance.getBatteryProcent();
         distance.setText(String.format("Distance traveled: \t%d", Logic.instance.getDistance()));
         battery.setText(String.format("Battery level: \t\t\t\t%s%%", bat));
-        usage.setText(String.format("Velocity: \t\t\t\t%d", Logic.instance.getVelocity()));
+        usage.setText(String.format("Remaining: \t\t\t\t%skm", Logic.instance.getRemainingDistance()));
+        velocity.setText(String.format("Velocity: \t\t\t\t%d", Logic.instance.getVelocity()));
 
         if(bat > 80) {
             batImage.setImageResource(R.drawable.battery_4);
@@ -103,6 +106,9 @@ public class PEDOact extends Activity implements View.OnClickListener{
 
         if(!Logic.instance.asyncRunning) {
             btn.setEnabled(true);
+            turnedon_cb.setChecked(false);
+            breaking_cb.setChecked(false);
+            charging_cb.setChecked(false);
         } else {
             btn.setEnabled(false);
         }

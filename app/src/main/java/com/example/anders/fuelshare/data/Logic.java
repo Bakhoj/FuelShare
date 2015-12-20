@@ -113,8 +113,12 @@ public class Logic {
         return (battery[battery.length-1].powerLevel/2.0)-5.0;
     }
 
-    public int getRemainingDistance(){
-        return 0;
+    public double getRemainingDistance(){
+        if (battery.length < 2 || distance.length < 2 ){ return 0; }
+        double deltaDist = (distance[distance.length-1].dist - distance[0].dist);
+        double deltaBat = (battery[0].powerLevel - battery[battery.length-1].powerLevel)/2;
+        double remainingDist = (deltaDist/deltaBat)*getBatteryProcent();
+        return remainingDist;
     }
 
     public void setVelocity(int velocity) {

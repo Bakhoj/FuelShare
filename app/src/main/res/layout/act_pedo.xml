@@ -103,5 +103,14 @@ tools:context="com.example.anders.fuelshare.PEDO.PEDOact">
             android:layout_below="@+id/break_checkBox"
             android:layout_alignLeft="@+id/break_checkBox"
             android:layout_alignStart="@+id/break_checkBox" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Velocity: \t\t\t\t\t\t0"
+            android:id="@+id/pedo_test_velocity"
+            android:layout_gravity="center"
+            android:layout_below="@+id/pedo_test_usage"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 </RelativeLayout>
