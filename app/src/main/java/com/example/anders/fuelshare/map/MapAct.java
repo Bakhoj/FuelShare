@@ -1,6 +1,7 @@
 package com.example.anders.fuelshare.map;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
@@ -12,16 +13,21 @@ import com.example.anders.fuelshare.PEDO.PEDOact;
 import com.example.anders.fuelshare.R;
 
 import com.example.anders.fuelshare.data.AsyncLocationsDatabase;
+import com.example.anders.fuelshare.data.Logic;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapAct extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
-
+    double myLat;
+    double myLng;
     Button pedoBtn;
+    boolean latLngSet = false;
     private GoogleMap mMap;
 
     @Override
@@ -57,6 +63,7 @@ public class MapAct extends FragmentActivity implements OnMapReadyCallback, View
         aLocD.execute();
         //zoom to position
         moveToLoc();
+        drawCircle();
     }
 
     public void addChargerMarkers(double latitude, double longtitude, String chargerAdress){
@@ -67,8 +74,6 @@ public class MapAct extends FragmentActivity implements OnMapReadyCallback, View
         );
     }
     private void moveToLoc(){
-        double myLat;
-        double myLng;
         GoogleMap map = this.mMap;
 
         map.setMyLocationEnabled(true);
@@ -83,6 +88,21 @@ public class MapAct extends FragmentActivity implements OnMapReadyCallback, View
 
         map.moveCamera(CameraUpdateFactory.zoomTo(15)); //max zoom is 21
         map.moveCamera(CameraUpdateFactory.newLatLng(myLocationLatLng));
+
+        latLngSet = true;
+    }
+
+    private void drawCircle(){
+        GoogleMap map = this.mMap;
+        double mRadius = Logic.instance.getRemainingDistance()*1000;
+        if(latLngSet && !(mRadius<0)) {
+            Circle circle = map.addCircle(new CircleOptions()
+                    .center(new LatLng(myLat,myLng))
+                    .radius(mRadius)
+                    .strokeColor(Color.RED)
+                    .fillColor(Color.BLUE));
+            circle.setVisible(true);
+        }
     }
 
     @Override

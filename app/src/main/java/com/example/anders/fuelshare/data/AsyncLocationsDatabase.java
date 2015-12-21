@@ -14,9 +14,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
-/**
- * Created by Lars on 18-12-2015.
- */
 public class AsyncLocationsDatabase  extends AsyncTask<Void, Void, String> {
     private static final String TAG_RESULTS="result";
     private static final String TAG_ADD = "address";

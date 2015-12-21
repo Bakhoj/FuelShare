@@ -1,18 +1,15 @@
 package com.example.anders.fuelshare.logIn;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.example.anders.fuelshare.PEDO.PEDOact;
 import com.example.anders.fuelshare.R;
 import com.example.anders.fuelshare.data.AsyncLoginDatabase;
 import com.example.anders.fuelshare.data.BTH;
-import com.example.anders.fuelshare.map.MapAct;
 
 
 public class LogInAct extends Activity implements View.OnClickListener{
